@@ -1,0 +1,104 @@
+import React, { useState } from "react";
+import { Button } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Container from "react-bootstrap/Container";
+import Image from "react-bootstrap/Image";
+import Row from "react-bootstrap/Row";
+
+function NavBar() {
+  return (
+    <>
+      <Container>
+        <Card style={{ width: "18rem" }}>
+          <Card.Img variant="top" src="https://picsum.photos/id/25/5000/3333" />
+          <Card.Body>
+            <Card.Title>Footer</Card.Title>
+            <h1>Hola mundo. Soy el componente NavBar</h1>
+            <Button variant="primary">Primary</Button>
+          </Card.Body>
+        </Card>
+      </Container>
+    </>
+  );
+}
+// function Content(props) {
+//   return <div>
+//     <h1 key={props.prodid}>Hola mundo. Soy el componente producto {props.prodid} </h1>
+//   </div>
+// }
+function Footer() {
+  return (
+    <>
+      <Container>
+        <Card style={{ width: "18rem" }}>
+          <Card.Img variant="top" src="https://picsum.photos/200" />
+          <Card.Body>
+            <Card.Title>Footer</Card.Title>
+            <h1> Hola Mundo. Soy componente Footer</h1>
+            <Button variant="primary">Primary</Button>
+          </Card.Body>
+        </Card>
+      </Container>
+    </>
+  );
+}
+
+function Product(props) {
+  const prodid = props.prodid;
+  return (
+    <>
+      <Container>
+        <Card style={{ width: "18rem" }}>
+          <Card.Img variant="top" src="https://picsum.photos/id/40/4106/2806" />
+          <Card.Body>
+            <Card.Title>Footer</Card.Title>
+            <h1>Hola mundo. Soy el componente producto {prodid} </h1>
+            <Button variant="primary">Primary</Button>
+          </Card.Body>
+        </Card>
+      </Container>
+    </>
+  );
+}
+
+function Products(props) {
+  const num_prods = props.likes;
+
+  // Para cada producto, crear un componente Product que reciba el id del producto
+  // y retorne un tag html
+  const complist = [];
+  for (let i = 0; i < num_prods; i++) {
+    complist.push(<Product key={i} prodid={i} />);
+  }
+
+  return <div>{complist}</div>;
+}
+
+export default function HomePage() {
+  const [count, setCount] = React.useState(0);
+  // const [saludo, setSaludo] = React.useState("Hola");
+
+  function addClick() {
+    setCount(count + 1);
+  }
+  function subtractClick() {
+    if (count > 0) {
+      setCount(count - 1);
+    } else {
+      setCount(0);
+    }
+  }
+
+  return (
+    <div>
+      <NavBar />
+      <button onClick={subtractClick}> - </button>
+      <b> Mostrando {count} producto(s) </b>
+      <button onClick={addClick}> + </button>
+      {/* {complist} */}
+      <Products likes={count} />
+      <Footer />
+    </div>
+  );
+}
