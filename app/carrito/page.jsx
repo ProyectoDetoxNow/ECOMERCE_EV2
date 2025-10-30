@@ -1,7 +1,6 @@
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+"use client";
 import Link from "next/link";
-import Image from "next/image";
-import Col from "react-bootstrap/esm/Col";
+import MediosDePago from "../../components/mediosDePago";
 
 export default function HomePage() {
   return (
@@ -95,36 +94,12 @@ export default function HomePage() {
       <footer className="bg-light border-top mt-5">
         <div className="container py-4">
           <div className="row">
-            {/* <div className="col-md-3 mb-3">
+            <div className="col-md-3 mb-3">
               <h6 className="text-uppercase text-success">Detox Now</h6>
               <div className="d-flex gap-2 mt-2">
-                <Image
-                  src="https://img.icons8.com/color/48/000000/visa.png"
-                  className="card-img-top"
-                  alt="Visa"
-                  width={40}
-                  height={40}
-                  style={{ marginTop: "10px" }}
-                />
-
-                <Image
-                  src="https://img.icons8.com/color/48/000000/mastercard-logo.png"
-                  className="card-img-png"
-                  alt="Mastercard"
-                  width={40}
-                  height={40}
-                  style={{ marginTop: "10px" }}
-                />
-                <Image
-                  src="https://img.icons8.com/ios-filled/48/000000/paypal.png"
-                  className="card-img-png"
-                  alt="PayPal"
-                  width={40}
-                  height={40}
-                  style={{ marginTop: "10px" }}
-                />
+                <MediosDePago />
               </div>
-            </div> */}
+            </div>
 
             <div className="col-md-4 mb-3">
               <h6 className="text-uppercase">Categorías</h6>
