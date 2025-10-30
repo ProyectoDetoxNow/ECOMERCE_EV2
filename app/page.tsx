@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import Link from 'next/link';
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function HomePage() {
   return (
@@ -11,9 +12,9 @@ export default function HomePage() {
         className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
         style={{
           backgroundImage: 'url("/imagenes/primera_imag.jpg")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: '300px',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "300px",
         }}
       >
         <h1 className="display-4 fw-bold">Bienvenido a DetoxNow 🌿</h1>
@@ -35,29 +36,52 @@ export default function HomePage() {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse justify-content-between" id="menuNavbar">
+          <div
+            className="collapse navbar-collapse justify-content-between"
+            id="menuNavbar"
+          >
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link className="nav-link text-success" href="/">Home</Link>
+                <Link className="nav-link text-success" href="/">
+                  Home
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-success" href="/productos">Productos</Link>
+                <Link className="nav-link text-success" href="/productos">
+                  Productos
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-success" href="/nosotros">Nosotros</Link>
+                <Link className="nav-link text-success" href="/nosotros">
+                  Nosotros
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-success" href="/blog">Blog</Link>
+                <Link className="nav-link text-success" href="/blog">
+                  Blog
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-success" href="/contacto">Contacto</Link>
+                <Link className="nav-link text-success" href="/contacto">
+                  Contacto
+                </Link>
               </li>
             </ul>
 
             <div>
-              <Link href="/login" className="text-success me-3 text-decoration-none">Iniciar sesión</Link>
+              <Link
+                href="/login"
+                className="text-success me-3 text-decoration-none"
+              >
+                Iniciar sesión
+              </Link>
               <span className="text-success me-3">|</span>
-              <Link href="/registro" className="text-success text-decoration-none me-4">Registro</Link>
+              <Link
+                href="/registro"
+                className="text-success text-decoration-none me-4"
+              >
+                Registro
+              </Link>
               <Link href="/carrito" className="btn btn-outline-success">
                 🛒 <span className="badge bg-warning text-dark">0</span>
               </Link>
@@ -68,44 +92,79 @@ export default function HomePage() {
 
       {/* 🔹 Contenido principal */}
       <main className="container py-5 text-center">
-        <h2 className="text-success fw-bold mb-3">Vive Saludable con DetoxNow</h2>
+        <h2 className="text-success fw-bold mb-3">
+          Vive Saludable con DetoxNow
+        </h2>
         <p className="lead text-muted">
-          Encuentra productos naturales, ecológicos y 100% saludables para mejorar tu bienestar físico y mental.
+          Encuentra productos naturales, ecológicos y 100% saludables para
+          mejorar tu bienestar físico y mental.
         </p>
-        <Link href="/productos" className="btn btn-success mt-3">Ver Productos</Link>
+        <Link href="/productos" className="btn btn-success mt-3">
+          Ver Productos
+        </Link>
 
         <hr className="my-5" />
 
         <div className="row g-4">
           <div className="col-md-4">
             <div className="card h-100 shadow-sm">
-              <img src="/imagenes/Producto 1.jpg" className="card-img-top" alt="Producto 1" />
+              <Image
+                src="/imagenes/Producto 1.jpg"
+                className="card-img-top"
+                alt="Producto 1"
+                width={200}
+                height={200}
+                style={{ marginTop: "20px" }}
+              />
+
               <div className="card-body">
                 <h5 className="card-title text-success">Jugos Detox</h5>
-                <p className="card-text">Refresca tu cuerpo con nuestras mezclas naturales llenas de energía.</p>
-                <Link href="/productos" className="btn btn-outline-success">Ver más</Link>
+                <p className="card-text">
+                  Refresca tu cuerpo con nuestras mezclas naturales llenas de
+                  energía.
+                </p>
+                <Link href="/productos" className="btn btn-outline-success">
+                  Ver más
+                </Link>
               </div>
             </div>
           </div>
 
           <div className="col-md-4">
             <div className="card h-100 shadow-sm">
-              <img src="/imagenes/primera_imag.jpg" className="card-img-top" alt="Producto 2" />
+              <img
+                src="/imagenes/primera_imag.jpg"
+                className="card-img-top"
+                alt="Producto 2"
+              />
               <div className="card-body">
                 <h5 className="card-title text-success">Snacks Saludables</h5>
-                <p className="card-text">Snacks sin azúcar, sin gluten y llenos de sabor natural.</p>
-                <Link href="/productos" className="btn btn-outline-success">Ver más</Link>
+                <p className="card-text">
+                  Snacks sin azúcar, sin gluten y llenos de sabor natural.
+                </p>
+                <Link href="/productos" className="btn btn-outline-success">
+                  Ver más
+                </Link>
               </div>
             </div>
           </div>
 
           <div className="col-md-4">
             <div className="card h-100 shadow-sm">
-              <img src="/imagenes/primera_imag.jpg" className="card-img-top" alt="Producto 3" />
+              <img
+                src="/imagenes/primera_imag.jpg"
+                className="card-img-top"
+                alt="Producto 3"
+              />
               <div className="card-body">
                 <h5 className="card-title text-success">Tés & Infusiones</h5>
-                <p className="card-text">Disfruta de nuestros tés relajantes con ingredientes orgánicos.</p>
-                <Link href="/productos" className="btn btn-outline-success">Ver más</Link>
+                <p className="card-text">
+                  Disfruta de nuestros tés relajantes con ingredientes
+                  orgánicos.
+                </p>
+                <Link href="/productos" className="btn btn-outline-success">
+                  Ver más
+                </Link>
               </div>
             </div>
           </div>
@@ -119,26 +178,71 @@ export default function HomePage() {
             <div className="col-md-3 mb-3">
               <h6 className="text-uppercase text-success">Detox Now</h6>
               <div className="d-flex gap-2 mt-2">
-                <img src="/imagenes/visa.png" alt="Visa" width="40" />
-                <img src="/imagenes/mastercard.png" alt="Mastercard" width="40" />
-                <img src="/imagenes/paypal.png" alt="PayPal" width="40" />
+                <Image
+                  src="https://img.icons8.com/color/48/000000/visa.png"
+                  className="card-img-top"
+                  alt="Visa"
+                  width={40}
+                  height={200}
+                  style={{ marginTop: "20px" }}
+                />
+
+                <Image
+                  src="https://img.icons8.com/color/48/000000/mastercard-logo.png"
+                  className="card-img-png"
+                  alt="Mastercard"
+                  width={40}
+                  height={200}
+                  style={{ marginTop: "20px" }}
+                />
+                <Image
+                  src="https://img.icons8.com/ios-filled/48/000000/paypal.png"
+                  className="card-img-png"
+                  alt="PayPal"
+                  width={40}
+                  height={200}
+                  style={{ marginTop: "20px" }}
+                />
               </div>
             </div>
 
             <div className="col-md-4 mb-3">
               <h6 className="text-uppercase">Categorías</h6>
               <ul className="list-unstyled">
-                <li><Link href="#" className="text-decoration-none text-dark">Política de Privacidad</Link></li>
-                <li><Link href="#" className="text-decoration-none text-dark">Términos y Condiciones</Link></li>
-                <li><Link href="/contacto" className="text-decoration-none text-dark">Contacto</Link></li>
+                <li>
+                  <Link href="#" className="text-decoration-none text-dark">
+                    Política de Privacidad
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-decoration-none text-dark">
+                    Términos y Condiciones
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contacto"
+                    className="text-decoration-none text-dark"
+                  >
+                    Contacto
+                  </Link>
+                </li>
               </ul>
             </div>
 
             <div className="col-md-5 mb-3">
-              <h6 className="text-uppercase">Suscríbete a nuestro Newsletter:</h6>
+              <h6 className="text-uppercase">
+                Suscríbete a nuestro Newsletter:
+              </h6>
               <form className="d-flex">
-                <input type="email" className="form-control me-2" placeholder="Ingresar Email" />
-                <button className="btn btn-dark" type="submit">Subscribir</button>
+                <input
+                  type="email"
+                  className="form-control me-2"
+                  placeholder="Ingresar Email"
+                />
+                <button className="btn btn-dark" type="submit">
+                  Subscribir
+                </button>
               </form>
             </div>
           </div>
