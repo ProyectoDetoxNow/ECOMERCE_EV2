@@ -25,65 +25,6 @@ export default function Nosotros() {
         <h1 className="fw-bold">Conoce más sobre nosotros</h1>
       </div>
 
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg bg-body-tertiary shadow p-2">
-        <div className="container">
-          <Link className="navbar-brand text-success fw-bold" href="/">
-            DetoxNow
-          </Link>
-
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#menuNavbar"
-            aria-controls="menuNavbar"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-
-          <div
-            className="collapse navbar-collapse justify-content-between"
-            id="menuNavbar"
-          >
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link className="nav-link text-success" href="/">
-                  Home
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-success" href="/productos">
-                  Productos
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-success" href="/nosotros">
-                  Nosotros
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-success" href="/blog">
-                  Blog
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link text-success" href="/contacto">
-                  Contacto
-                </Link>
-              </li>
-            </ul>
-
-            {/* Carrito */}
-            <Link href="/carrito" className="btn btn-outline-success">
-              🛒 <span className="badge bg-warning text-dark">0</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       {/* Login / Registro */}
       <div className="container">
         <nav className="d-flex justify-content-end p-3">
