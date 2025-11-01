@@ -8,7 +8,7 @@ import Col from "react-bootstrap/esm/Col";
 export default function HomePage() {
   return (
     <>
-      {/* 🔹 Banner superior */}
+      {/* Banner superior */}
       <div
         className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
         style={{

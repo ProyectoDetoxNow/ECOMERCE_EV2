@@ -60,61 +60,6 @@ export default function ProductosPage() {
         <h1 className="display-5 fw-bold">Nuestros Productos</h1>
       </div>
 
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg bg-body-tertiary shadow p-2">
-        <div className="container">
-          <Link href="/" className="navbar-brand text-success fw-bold">
-            DetoxNow
-          </Link>
-
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#menuNavbar"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-
-          <div
-            className="collapse navbar-collapse justify-content-between"
-            id="menuNavbar"
-          >
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link href="/" className="nav-link text-success">
-                  Home
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/productos" className="nav-link text-success">
-                  Productos
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/nosotros" className="nav-link text-success">
-                  Nosotros
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/blog" className="nav-link text-success">
-                  Blog
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/contacto" className="nav-link text-success">
-                  Contacto
-                </Link>
-              </li>
-            </ul>
-
-            <Link href="/carrito" className="btn btn-outline-success">
-              🛒 <span className="badge bg-warning text-dark">0</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       {/* Enlaces de login / registro */}
       <div className="container">
         <nav className="d-flex justify-content-end p-3">

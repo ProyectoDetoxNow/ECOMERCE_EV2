@@ -1,9 +1,14 @@
-"use client"; // 👉 Necesario para que funcione la interactividad (Bootstrap + botones)
-
+"use client";
+import { useEffect } from "react";
 import Link from "next/link";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Navbar() {
+  useEffect(() => {
+    // Cargamos el JS de Bootstrap solo en el cliente
+    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
+
   return (
     <>
       <div className="text-center py-3 bg-light">
@@ -34,7 +39,6 @@ export default function Navbar() {
             className="collapse navbar-collapse justify-content-between"
             id="menuNavbar"
           >
-            {/* 🔸 Enlaces de navegación */}
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <Link className="nav-link text-success" href="/">
@@ -63,7 +67,6 @@ export default function Navbar() {
               </li>
             </ul>
 
-            {/* 🔸 Zona de usuario y carrito */}
             <div className="d-flex align-items-center">
               <Link
                 href="/login"
