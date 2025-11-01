@@ -1,25 +1,16 @@
 "use client";
-
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
 import Col from "react-bootstrap/esm/Col";
+import Banner from "@/components/Banner";
 
 export default function HomePage() {
   return (
     <>
       {/* Banner superior */}
-      <div
-        className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
-        style={{
-          backgroundImage: 'url("/imagenes/primera_imag.jpg")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "300px",
-        }}
-      >
-        <h1 className="display-4 fw-bold">Bienvenido a DetoxNow</h1>
-      </div>
+      <Banner titulo="Bienvenidos a DetoxNow" />
 
       <main className="container py-5 text-center">
         <h2 className="text-success fw-bold mb-3">

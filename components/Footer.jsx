@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import MediosDePago from "./mediosDePago";
+import MediosDePago from "../components/MediosDePago";
 
 export default function Footer() {
   return (

@@ -1,40 +1,42 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 🔹 Navbar DetoxNow personalizada */
+.navbar {
+  background-color: #f8fff9 !important;
+  border-bottom: 1px solid #d8f4e1;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.navbar-brand {
+  letter-spacing: 1px;
+  color: #008f6b !important;
 }
 
-.banner-superior {
-  background: url("/imagenes/primera_imag.jpg") center/cover no-repeat;
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.nav-link {
+  color: #008f6b !important;
+}
+
+.nav-link:hover {
+  color: #006c4e !important;
+  text-decoration: underline;
+}
+
+/* 🔹 Botón del carrito */
+.btn-outline-success {
+  border-color: #008f6b;
+  color: #008f6b;
+}
+
+.btn-outline-success:hover {
+  background-color: #008f6b;
   color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
 }
 
-.card-img-prod {
-  display: block;
-  margin: 0 auto;
-  width: 80%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
+/* 🔹 Toggle visible en móvil */
+.navbar-toggler {
+  border-color: #008f6b !important;
+}
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgb(0,143,107)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
 }
