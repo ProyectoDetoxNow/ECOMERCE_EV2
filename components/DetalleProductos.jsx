@@ -6,7 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import useCarrito from "@/components/useCarrito"; // 👈 Importamos el hook
+import { useCart } from "@/components/CartContext";
+import BotonAgregarCarrito from "@/components/BotonAgregarCarrito";
 
 export default function DetalleProducto() {
   const searchParams = useSearchParams();
@@ -16,7 +17,7 @@ export default function DetalleProducto() {
   const [relacionados, setRelacionados] = useState([]);
   const [cantidad, setCantidad] = useState(1);
 
-  const { agregarProducto } = useCarrito(); // 👈 Usamos la función del carrito
+  const { addToCart } = useCart();
 
   // Datos base de los productos
   const productos = {
@@ -109,10 +110,9 @@ export default function DetalleProducto() {
       precio: producto.precio,
       imagen: producto.imagen,
       descripcion: producto.descripcion,
-      cantidad: Number(cantidad),
+      quantity: Number(cantidad),
     };
-
-    agregarProducto(item);
+    addToCart(item);
     alert(`${producto.nombre} agregado al carrito (${cantidad} unidad/es)`);
   };
 
@@ -162,9 +162,12 @@ export default function DetalleProducto() {
               </select>
             </div>
 
-            <button onClick={handleAgregar} className="btn btn-success btn-lg">
-              <i className="bi bi-cart-plus"></i> Agregar al carrito
-            </button>
+            {/* Botón Agregar al carrito */}
+            <BotonAgregarCarrito
+              producto={producto}
+              cantidad={cantidad}
+              className="btn btn-success btn-lg"
+            />
           </div>
         </div>
       </div>
