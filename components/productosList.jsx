@@ -1,49 +1,22 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { obtenerProductos, eliminarProducto } from "../data/productosData";
 
 export default function ProductosList() {
-  const productos = [
-    {
-      id: "batido-verde",
-      nombre: "Batido Verde Clásico",
-      descripcion: "Rico en clorofila y antioxidantes...",
-      imagen: "/imagenes/Batido Verde Clásico.jpg",
-    },
-    {
-      id: "batido-tropical",
-      nombre: "Batido Tropical Detox",
-      descripcion: "Refrescante y digestivo...",
-      imagen: "/imagenes/Batido Tropical Detox.jpg",
-    },
-    {
-      id: "batido-limon-chia",
-      nombre: "Batido Limón & Chía",
-      descripcion: "Hidratante y depurativo...",
-      imagen: "/imagenes/Batido Limón & Chía.jpg",
-    },
-    {
-      id: "batido-rojo",
-      nombre: "Batido Rojo Antioxidante",
-      descripcion: "Potente fuente de antioxidantes...",
-      imagen: "/imagenes/BATIDO ROJO.jpg",
-    },
-    {
-      id: "batido-verde-dulce",
-      nombre: "Batido Verde Dulce",
-      descripcion: "Combina lo detox del verde con un toque dulce natural...",
-      imagen: "/imagenes/BATIDO VERDE DULCE.jpg",
-    },
-    {
-      id: "batido-cremoso",
-      nombre: "Batido Cremoso Detox",
-      descripcion: "Cremoso, saciante y naturalmente delicioso...",
-      imagen: "/imagenes/BATIDO CREMOSO.jpg",
-    },
-  ];
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    setProductos(obtenerProductos());
+  }, []);
+
+  const handleEliminar = (id) => {
+    eliminarProducto(id);
+    setProductos(obtenerProductos());
+  };
 
   return (
     <div className="container mt-4">
@@ -69,8 +42,11 @@ export default function ProductosList() {
                   >
                     Ver detalle
                   </Link>
-                  <button className="btn btn-success">
-                    <i className="bi bi-cart-plus"></i> Agregar
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleEliminar(producto.id)}
+                  >
+                    Eliminar
                   </button>
                 </div>
               </div>

@@ -1,37 +1,40 @@
-"use client";
+let productos = [
+  {
+    id: "batido-verde",
+    nombre: "Batido Verde Clásico",
+    descripcion: "Rico en clorofila y antioxidantes...",
+    imagen: "/imagenes/Batido Verde Clásico.jpg",
+  },
+  {
+    id: "batido-tropical",
+    nombre: "Batido Tropical Detox",
+    descripcion: "Refrescante y digestivo...",
+    imagen: "/imagenes/Batido Tropical Detox.jpg",
+  },
+  {
+    id: "batido-limon-chia",
+    nombre: "Batido Limón & Chía",
+    descripcion: "Hidratante y depurativo...",
+    imagen: "/imagenes/Batido Limón & Chía.jpg",
+  },
+];
 
-import Link from "next/link";
-import ProductosList from "../../components/productosList";
-import Banner from "@/components/Banner";
+// Leer todos
+export const obtenerProductos = () => productos;
 
-export default function ProductosPage() {
-  return (
-    <>
-      <Banner titulo="Nuestros productos" />
+// Crear
+export const agregarProducto = (nuevoProducto) => {
+  productos.push(nuevoProducto);
+};
 
-      {/* Enlaces de login / registro */}
-      <div className="container">
-        <nav className="d-flex justify-content-end p-3">
-          <Link href="/login" className="nav-link text-success me-2">
-            Iniciar sesión
-          </Link>
-          <span className="text-success me-2">|</span>
-          <Link href="/registro" className="nav-link text-success me-2">
-            Registro
-          </Link>
-        </nav>
-      </div>
-
-      {/* Título */}
-      <h1
-        className="text-center my-4"
-        style={{ fontFamily: "Story Script, cursive" }}
-      >
-        Productos
-      </h1>
-
-      {/* Componente de listado */}
-      <ProductosList />
-    </>
+// Actualizar
+export const actualizarProducto = (id, datosActualizados) => {
+  productos = productos.map((p) =>
+    p.id === id ? { ...p, ...datosActualizados } : p
   );
-}
+};
+
+// Eliminar
+export const eliminarProducto = (id) => {
+  productos = productos.filter((p) => p.id !== id);
+};
