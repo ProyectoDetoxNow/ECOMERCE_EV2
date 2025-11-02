@@ -2,22 +2,12 @@
 
 import Link from "next/link";
 import ProductosList from "../../components/productosList";
+import Banner from "@/components/Banner";
 
 export default function ProductosPage() {
   return (
     <>
-      {/* Banner superior */}
-      <div
-        className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
-        style={{
-          backgroundImage: 'url("/imagenes/primera_imag.jpg")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: "300px",
-        }}
-      >
-        <h1 className="display-5 fw-bold">Nuestros Productos</h1>
-      </div>
+      <Banner titulo="Nuestros productos" />
 
       {/* Enlaces de login / registro */}
       <div className="container">

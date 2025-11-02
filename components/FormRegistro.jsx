@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 
 export default function RegistroForm() {
+  // --- Estados del formulario ---
   const [formData, setFormData] = useState({
     nombre: "",
     correo: "",
@@ -24,42 +25,96 @@ export default function RegistroForm() {
     especial: false,
   });
 
+  // --- Validar requisitos de contraseña dinámicamente ---
   const validatePassword = (password) => {
     setPasswordRequirements({
       longitud: password.length >= 4 && password.length <= 10,
       mayuscula: /[A-Z]/.test(password),
       minuscula: /[a-z]/.test(password),
       numero: /[0-9]/.test(password),
-      especial: /[@#$%]/.test(password),
+      especial: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
     });
   };
 
+  // --- Actualizar campos ---
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
+
     if (id === "password") validatePassword(value);
   };
 
+  // --- Validación en tiempo real de confirmación ---
+  useEffect(() => {
+    if (formData.confirmPassword) {
+      if (formData.confirmPassword !== formData.password) {
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: "Las contraseñas no coinciden.",
+        }));
+      } else {
+        setErrors((prev) => {
+          const { confirmPassword, ...rest } = prev;
+          return rest;
+        });
+      }
+    }
+  }, [formData.password, formData.confirmPassword]);
+
+  // --- Envío del formulario ---
   const handleSubmit = (e) => {
     e.preventDefault();
     let newErrors = {};
 
-    if (!formData.nombre)
-      newErrors.nombre = "Debe ingresar su nombre y apellido.";
+    // Validación de nombre
+    if (!formData.nombre.trim() || formData.nombre.length > 100)
+      newErrors.nombre = "Debe ingresar su nombre (máx. 100 caracteres).";
+
+    // Validación de correo
     if (
-      !/^[\w.%+-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/.test(
+      !/^[\w.%+-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/i.test(
         formData.correo
-      )
+      ) ||
+      formData.correo.length > 100
     )
       newErrors.correo =
-        "Correo inválido. Solo @duoc.cl, @profesor.duoc.cl o @gmail.com.";
-    if (formData.password !== formData.confirmPassword)
+        "Correo inválido. Solo se aceptan @duoc.cl, @profesor.duoc.cl o @gmail.com.";
+
+    // Validación de contraseña con regex global
+    const passRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{4,10}$/;
+    if (!passRegex.test(formData.password))
+      newErrors.password = "La contraseña no cumple con los requisitos.";
+
+    // Confirmar contraseña
+    if (formData.confirmPassword !== formData.password)
       newErrors.confirmPassword = "Las contraseñas no coinciden.";
 
     setErrors(newErrors);
+
+    // Si todo está correcto
     if (Object.keys(newErrors).length === 0) {
       alert("✅ Registro exitoso!");
       console.log(formData);
+
+      // Resetear formulario
+      setFormData({
+        nombre: "",
+        correo: "",
+        password: "",
+        confirmPassword: "",
+        telefono: "",
+        direccion: "",
+        region: "",
+        comuna: "",
+      });
+      setPasswordRequirements({
+        longitud: false,
+        mayuscula: false,
+        minuscula: false,
+        numero: false,
+        especial: false,
+      });
     }
   };
 
@@ -100,7 +155,12 @@ export default function RegistroForm() {
           id="password"
           value={formData.password}
           onChange={handleChange}
+          isInvalid={!!errors.password}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors.password}
+        </Form.Control.Feedback>
+
         <div className="mt-2">
           <small
             className={
