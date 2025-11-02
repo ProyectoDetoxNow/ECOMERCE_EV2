@@ -1,5 +1,6 @@
 "use client";
 import { useCart } from "@/components/CartContext";
+import Link from "next/link";
 
 export default function CarritoPage() {
   const {
@@ -66,8 +67,12 @@ export default function CarritoPage() {
         </div>
       ))}
 
-      <div className="mt-4 border-top pt-3">
+      {/* Total + Botón Pagar */}
+      <div className="mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
         <h5>Total: ${totalPrice}</h5>
+        <Link href="/pago" className="btn btn-success btn-lg">
+          Pagar
+        </Link>
       </div>
     </div>
   );

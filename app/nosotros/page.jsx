@@ -25,19 +25,6 @@ export default function Nosotros() {
         <h1 className="fw-bold">Conoce más sobre nosotros</h1>
       </div>
 
-      {/* Login / Registro */}
-      <div className="container">
-        <nav className="d-flex justify-content-end p-3">
-          <Link className="text-success me-2" href="/login">
-            Iniciar sesión
-          </Link>
-          <span className="text-success me-2">|</span>
-          <Link className="text-success me-2" href="/registro">
-            Registro
-          </Link>
-        </nav>
-      </div>
-
       {/* SOBRE NOSOTROS */}
       <section className="container mt-5 mb-5" id="empresa">
         <h1
