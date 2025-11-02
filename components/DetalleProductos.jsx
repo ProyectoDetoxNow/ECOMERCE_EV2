@@ -6,12 +6,17 @@ import Image from "next/image";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import useCarrito from "@/components/useCarrito"; // 👈 Importamos el hook
 
 export default function DetalleProducto() {
   const searchParams = useSearchParams();
   const idProducto = searchParams.get("producto");
+
   const [producto, setProducto] = useState(null);
   const [relacionados, setRelacionados] = useState([]);
+  const [cantidad, setCantidad] = useState(1);
+
+  const { agregarProducto } = useCarrito(); // 👈 Usamos la función del carrito
 
   // Datos base de los productos
   const productos = {
@@ -96,6 +101,21 @@ export default function DetalleProducto() {
     );
   }
 
+  // --- Función para agregar al carrito ---
+  const handleAgregar = () => {
+    const item = {
+      id: producto.id,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      imagen: producto.imagen,
+      descripcion: producto.descripcion,
+      cantidad: Number(cantidad),
+    };
+
+    agregarProducto(item);
+    alert(`${producto.nombre} agregado al carrito (${cantidad} unidad/es)`);
+  };
+
   return (
     <>
       {/* Detalle principal */}
@@ -131,6 +151,8 @@ export default function DetalleProducto() {
                 id="cantidad"
                 className="form-select"
                 style={{ maxWidth: "120px" }}
+                value={cantidad}
+                onChange={(e) => setCantidad(e.target.value)}
               >
                 {[1, 2, 3, 4].map((num) => (
                   <option key={num} value={num}>
@@ -140,7 +162,7 @@ export default function DetalleProducto() {
               </select>
             </div>
 
-            <button className="btn btn-success btn-lg">
+            <button onClick={handleAgregar} className="btn btn-success btn-lg">
               <i className="bi bi-cart-plus"></i> Agregar al carrito
             </button>
           </div>

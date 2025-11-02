@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -8,8 +8,35 @@ import Navbar from "react-bootstrap/Navbar";
 import Link from "next/link";
 
 export default function NavBarDetox() {
+  const [totalQuantity, setTotalQuantity] = useState(0);
+
   useEffect(() => {
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
+
+    const updateCartCount = () => {
+      try {
+        const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
+        const total = carrito.reduce(
+          (sum, item) => sum + Number(item.cantidad || 0),
+          0
+        );
+        setTotalQuantity(total);
+      } catch {
+        setTotalQuantity(0);
+      }
+    };
+
+    // Actualizar al cargar
+    updateCartCount();
+
+    // Escuchar cambios en el carrito (desde otras pestañas o actualizaciones)
+    const handleStorage = (e) => {
+      if (e.key === "carrito") updateCartCount();
+    };
+    window.addEventListener("storage", handleStorage);
+
+    // Limpieza
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   return (
@@ -60,7 +87,7 @@ export default function NavBarDetox() {
           </Nav>
 
           {/* 🔹 Acciones a la derecha */}
-          <div className="d-flex align-items-center gap-3">
+          <div className="d-flex align-items-center gap-3 position-relative">
             <Nav.Link
               as={Link}
               href="/login"
@@ -76,13 +103,25 @@ export default function NavBarDetox() {
             >
               Registro
             </Nav.Link>
-            <Nav.Link
-              as={Link}
-              href="/carrito"
-              className="btn btn-outline-success px-3"
-            >
-              🛒 <span className="badge bg-warning text-dark">0</span>
-            </Nav.Link>
+
+            {/* 🛒 Carrito con contador */}
+            <div className="position-relative">
+              <Nav.Link
+                as={Link}
+                href="/carrito"
+                className="btn btn-outline-success px-3 position-relative"
+              >
+                🛒
+                {totalQuantity > 0 && (
+                  <span
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    {totalQuantity}
+                  </span>
+                )}
+              </Nav.Link>
+            </div>
           </div>
         </Navbar.Collapse>
       </Container>
