@@ -20,6 +20,7 @@ export default function NavBarDetox() {
             <Nav.Link as={Link} href="/" className="text-success fw-semibold">
               Home
             </Nav.Link>
+
             <Nav.Link
               as={Link}
               href="/productos"
@@ -27,6 +28,15 @@ export default function NavBarDetox() {
             >
               Productos
             </Nav.Link>
+
+            <Nav.Link
+              as={Link}
+              href="/categorias"
+              className="text-success fw-semibold"
+            >
+              Categorias
+            </Nav.Link>
+
             <Nav.Link
               as={Link}
               href="/nosotros"
@@ -34,6 +44,7 @@ export default function NavBarDetox() {
             >
               Nosotros
             </Nav.Link>
+
             <Nav.Link
               as={Link}
               href="/blog"
@@ -41,6 +52,7 @@ export default function NavBarDetox() {
             >
               Blog
             </Nav.Link>
+
             <Nav.Link
               as={Link}
               href="/contacto"
