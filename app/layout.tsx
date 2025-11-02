@@ -5,6 +5,7 @@ import "./globals.css";
 import NavbarDetox from "../components/NavBarDetox";
 import Footer from "../components/Footer";
 import NavBarDetox from "../components/NavBarDetox";
+import { CartProvider } from "../components/CartContext"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,9 +32,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NavBarDetox />
-        {children}
-        <Footer />
+        {/* 👇 Envuelve toda la app con el proveedor del carrito */}
+        <CartProvider>
+          <NavBarDetox />
+          <main>{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
