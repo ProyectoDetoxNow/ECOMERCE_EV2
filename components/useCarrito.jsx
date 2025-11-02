@@ -56,13 +56,22 @@ export default function useCarrito() {
 
   const cambiarCantidad = (index, accion) => {
     setCarrito((prev) => {
-      const nuevo = [...prev];
-      if (accion === "sumar") nuevo[index].cantidad++;
-      else if (accion === "restar") {
-        nuevo[index].cantidad--;
-        if (nuevo[index].cantidad <= 0) nuevo.splice(index, 1);
-      } else if (accion === "eliminar") nuevo.splice(index, 1);
-      saveCarrito(nuevo);
+      const nuevo = prev
+        .map((p, i) =>
+          i === index
+            ? {
+                ...p,
+                cantidad:
+                  accion === "sumar"
+                    ? p.cantidad + 1
+                    : accion === "restar"
+                    ? Math.max(0, p.cantidad - 1)
+                    : p.cantidad,
+              }
+            : p
+        )
+        .filter((p) => p.cantidad > 0);
+
       return nuevo;
     });
   };
@@ -94,6 +103,10 @@ export default function useCarrito() {
     const totalItems = carrito.reduce((s, it) => s + Number(it.cantidad), 0);
     setCartCount(totalItems);
   }, [carrito, cupon]);
+
+  useEffect(() => {
+    saveCarrito(carrito);
+  }, [carrito]);
 
   return {
     carrito,
