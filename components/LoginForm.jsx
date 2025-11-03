@@ -16,12 +16,27 @@ export default function LoginForm() {
     e.preventDefault();
     let newErrors = {};
 
-    if (!formData.correo)
+    // --- VALIDACIÓN CORREO ---
+    if (!formData.correo) {
       newErrors.correo = "Debe ingresar su correo electrónico.";
-    if (!formData.password) newErrors.password = "Debe ingresar su contraseña.";
+    } else {
+      const correoRegex = /^[\w.-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/;
+      if (!correoRegex.test(formData.correo)) {
+        newErrors.correo =
+          "Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com.";
+      }
+    }
+
+    // --- VALIDACIÓN CONTRASEÑA ---
+    if (!formData.password) {
+      newErrors.password = "Debe ingresar su contraseña.";
+    } else if (formData.password.length < 4 || formData.password.length > 10) {
+      newErrors.password = "La contraseña debe tener entre 4 y 10 caracteres.";
+    }
 
     setErrors(newErrors);
 
+    // --- SI NO HAY ERRORES ---
     if (Object.keys(newErrors).length === 0) {
       alert("✅ Inicio de sesión exitoso!");
       console.log("Datos enviados:", formData);
