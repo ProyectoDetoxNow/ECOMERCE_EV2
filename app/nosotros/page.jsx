@@ -1,14 +1,9 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect } from "react";
 
 export default function Nosotros() {
   // Activamos Bootstrap JS
-  useEffect(() => {
-    import("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
 
   return (
     <>

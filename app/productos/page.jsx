@@ -1,35 +1,18 @@
 "use client";
 
-import React from "react";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
+import { Container, Row, Col, Card, Button } from "react-bootstrap"; // ✅ Importaciones necesarias
 import { productos } from "../../data/productos";
-import BotonAgregarCarrito from "@/components/BotonAgregarCarrito";
+import BotonAgregarCarrito from "@/components/BotonAgregarCarrito"; // ✅ Asegúrate de que exista y esté bien escrito
 
 export default function ProductosPage() {
+  const router = useRouter();
   const listaProductos = Object.values(productos);
 
   return (
     <>
-      {/* Banner superior */}
-      <div
-        style={{
-          backgroundImage: `url('/imagenes/primera_imag.jpg')`,
-          height: "300px",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "white",
-          textShadow: "2px 2px 4px rgba(0,0,0,0.6)",
-        }}
-      >
-        <h1 className="display-5 fw-bold">Productos DetoxNow</h1>
-      </div>
-
-      {/* Listado de productos */}
+      {/* Banner o cabecera */}
       <Container className="mt-5">
         <Row className="g-4">
           {listaProductos.map((p) => (
@@ -49,22 +32,22 @@ export default function ProductosPage() {
                     }}
                   />
                 </div>
+
                 <Card.Body>
                   <Card.Title>{p.nombre}</Card.Title>
                   <Card.Text>{p.descripcion}</Card.Text>
 
                   <div className="d-flex justify-content-center gap-2">
-                    {/* Botón Ver más */}
+                    {/* ✅ Navegación sin usar window */}
                     <Button
                       variant="outline-success"
                       onClick={() =>
-                        (window.location.href = `/detProducto?producto=${p.id}`)
+                        router.push(`/detProducto?producto=${p.id}`)
                       }
                     >
                       <i className="bi bi-info-circle"></i> Ver más
                     </Button>
 
-                    {/* Botón Agregar al carrito */}
                     <BotonAgregarCarrito
                       producto={p}
                       className="btn btn-success"
