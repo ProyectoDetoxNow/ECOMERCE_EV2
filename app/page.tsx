@@ -1,101 +1,98 @@
+"use client";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "./globals.css";
+import Link from "next/link";
 import Image from "next/image";
+import Col from "react-bootstrap/esm/Col";
+import Banner from "@/components/Banner";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <>
+      {/* Banner superior */}
+      <Banner titulo="Bienvenidos a DetoxNow" />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <main className="container py-5 text-center">
+        <h2 className="text-success fw-bold mb-3">
+          Vive Saludable con DetoxNow
+        </h2>
+        <p className="lead text-muted">
+          Encuentra productos naturales, ecológicos y 100% saludables para
+          mejorar tu bienestar físico y mental.
+        </p>
+        <Link href="/productos" className="btn btn-success mt-3">
+          Ver Productos
+        </Link>
+
+        <hr className="my-5" />
+
+        <div className="row g-4">
+          <div className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <Col xs={6} md={4}>
+                <Image
+                  src="/imagenes/Producto 1.jpg"
+                  className="card-img-top"
+                  alt="Producto 1"
+                  width={200}
+                  height={200}
+                  style={{ marginTop: "20px" }}
+                />
+              </Col>
+
+              <div className="card-body">
+                <h5 className="card-title text-success">Jugos Detox</h5>
+                <p className="card-text">
+                  Refresca tu cuerpo con nuestras mezclas naturales llenas de
+                  energía.
+                </p>
+                <Link href="/productos" className="btn btn-outline-success">
+                  Ver más
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <img
+                src="/imagenes/primera_imag.jpg"
+                className="card-img-top"
+                alt="Producto 2"
+              />
+              <div className="card-body">
+                <h5 className="card-title text-success">Snacks Saludables</h5>
+                <p className="card-text">
+                  Snacks sin azúcar, sin gluten y llenos de sabor natural.
+                </p>
+                <Link href="/productos" className="btn btn-outline-success">
+                  Ver más
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <img
+                src="/imagenes/primera_imag.jpg"
+                className="card-img-top"
+                alt="Producto 3"
+              />
+              <div className="card-body">
+                <h5 className="card-title text-success">Tés & Infusiones</h5>
+                <p className="card-text">
+                  Disfruta de nuestros tés relajantes con ingredientes
+                  orgánicos.
+                </p>
+                <Link href="/productos" className="btn btn-outline-success">
+                  Ver más
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    </>
   );
 }
