@@ -143,7 +143,7 @@ export default function RegistroForm() {
           onChange={handleChange}
           isInvalid={!!errors.correo}
         />
-        <Form.Control.Feedback type="invalid">
+        <Form.Control.Feedback id="correoFeedback" type="invalid">
           {errors.correo}
         </Form.Control.Feedback>
       </Form.Group>
@@ -157,7 +157,7 @@ export default function RegistroForm() {
           onChange={handleChange}
           isInvalid={!!errors.password}
         />
-        <Form.Control.Feedback type="invalid">
+        <Form.Control.Feedback id="passwordFeedback" type="invalid">
           {errors.password}
         </Form.Control.Feedback>
 
@@ -213,7 +213,7 @@ export default function RegistroForm() {
           onChange={handleChange}
           isInvalid={!!errors.confirmPassword}
         />
-        <Form.Control.Feedback type="invalid">
+        <Form.Control.Feedback id="confirmPasswordFeedback" type="invalid">
           {errors.confirmPassword}
         </Form.Control.Feedback>
       </Form.Group>

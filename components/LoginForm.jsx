@@ -54,7 +54,7 @@ export default function LoginForm() {
           onChange={handleChange}
           isInvalid={!!errors.correo}
         />
-        <Form.Control.Feedback type="invalid">
+        <Form.Control.Feedback id="correoFeedback" type="invalid">
           {errors.correo}
         </Form.Control.Feedback>
       </Form.Group>
@@ -68,7 +68,7 @@ export default function LoginForm() {
           onChange={handleChange}
           isInvalid={!!errors.password}
         />
-        <Form.Control.Feedback type="invalid">
+        <Form.Control.Feedback id="passwordFeedback" type="invalid">
           {errors.password}
         </Form.Control.Feedback>
       </Form.Group>
