@@ -65,7 +65,7 @@ export default function LoginForm() {
       </div>
 
       <div className="text-center">
-        <Button type="submit" variant="success" className="w-100">
+        <Button id="btnLogin" type="submit" variant="success" className="w-100">
           Iniciar Sesión
         </Button>
       </div>
