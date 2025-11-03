@@ -273,7 +273,12 @@ export default function RegistroForm() {
         </Col>
       </Row>
 
-      <Button type="submit" variant="success" className="w-100">
+      <Button
+        id="btnRegistrar"
+        type="submit"
+        variant="success"
+        className="w-100"
+      >
         Registrar
       </Button>
     </Form>
