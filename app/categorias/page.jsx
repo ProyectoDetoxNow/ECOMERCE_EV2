@@ -1,12 +1,20 @@
 "use client";
 import { useState } from "react"; // ✅ Agregar este import
 import Image from "next/image"; // ✅ Agregar este import
-import { obtenerProductos } from "../../data/productosData";
+import { obtenerProductos } from "../../service/inventarioApi"; // ✅ Importar la función para obtener productos
 
 export default function CategoriasPage() {
-  const productos = obtenerProductos();
+  const [productos, setProductos] = useState([]);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
 
+  useEffect(() => {
+    obtenerProductos()
+      .then((data) => setProductos(data))
+      .catch((err) => {
+        console.error(err);
+        setProductos([]);
+      });
+  }, []);
   const categorias = [...new Set(productos.map((p) => p.categoria))];
   const filtrados = categoriaSeleccionada
     ? productos.filter((p) => p.categoria === categoriaSeleccionada)

@@ -1,11 +1,11 @@
 "use client";
 
-import DetalleProducto from "../../components/DetalleProductos";
+import React from "react";
+import DetalleProducto from "@/components/DetalleProducto";
 
 export default function DetalleProductoPage() {
   return (
     <>
-      {/* Banner */}
       <div
         className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
         style={{
@@ -17,8 +17,6 @@ export default function DetalleProductoPage() {
       >
         <h1 className="display-5 fw-bold">Detalle del Producto</h1>
       </div>
-
-      {/* Contenido principal */}
       <DetalleProducto />
     </>
   );

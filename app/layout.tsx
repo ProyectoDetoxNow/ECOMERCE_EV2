@@ -6,6 +6,7 @@ import NavBarDetox from "../components/NavBarDetox";
 import Footer from "../components/Footer";
 import { CartProvider } from "../components/CartContext";
 import Script from "next/script";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -21,24 +22,18 @@ export const metadata: Metadata = {
   description: "Tienda online de productos congelados para batidos detox",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {/* 👇 Envuelve toda la app con el proveedor del carrito */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* Proveedor de carrito */}
         <CartProvider>
           <NavBarDetox />
           <main>{children}</main>
           <Footer />
         </CartProvider>
 
-        {/* ✅ Script de Bootstrap */}
+        {/* Script de Bootstrap */}
         <Script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
           strategy="afterInteractive"

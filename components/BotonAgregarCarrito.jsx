@@ -1,4 +1,5 @@
 "use client";
+
 import { useCart } from "@/components/CartContext";
 
 export default function BotonAgregarCarrito({ producto, className = "" }) {
