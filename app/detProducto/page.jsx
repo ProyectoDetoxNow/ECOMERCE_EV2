@@ -3,6 +3,7 @@ import { obtenerProductoPorId } from "../../services/inventarioApi";
 
 export default async function DetalleProductoPage({ searchParams }) {
   const id = searchParams.producto;
+
   const productoEncontrado = await obtenerProductoPorId(id);
 
   return (
