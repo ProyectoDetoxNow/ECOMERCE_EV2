@@ -127,3 +127,4 @@ export default function DetalleProducto({ producto }) {
     </>
   );
 }
+//ok
