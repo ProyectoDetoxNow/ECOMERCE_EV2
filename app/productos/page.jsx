@@ -1,14 +1,13 @@
-"use client";
-
 import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import Image from "next/image";
 import Link from "next/link";
-import { productos } from "../../data/productos";
 import BotonAgregarCarrito from "@/components/BotonAgregarCarrito";
+import { obtenerInventario } from "@/services/inventarioApi";
 
-export default function ProductosPage() {
-  const listaProductos = Object.values(productos);
+export default async function ProductosPage() {
+  // Llamada a la API del backend en Railway
+  const productos = await obtenerInventario();
 
   return (
     <>
@@ -32,7 +31,7 @@ export default function ProductosPage() {
       {/* Listado de productos */}
       <Container className="mt-5">
         <Row className="g-4">
-          {listaProductos.map((p) => (
+          {productos.map((p) => (
             <Col key={p.id} md={4}>
               <Card className="shadow text-center h-100">
                 <div className="p-3">
@@ -49,17 +48,18 @@ export default function ProductosPage() {
                     }}
                   />
                 </div>
+
                 <Card.Body>
                   <Card.Title>{p.nombre}</Card.Title>
                   <Card.Text>{p.descripcion}</Card.Text>
 
                   <div className="d-flex justify-content-center gap-2">
+
                     {/* Botón Ver más */}
                     <Button
                       variant="outline-success"
-                      onClick={() =>
-                        (window.location.href = `/detProducto?producto=${p.id}`)
-                      }
+                      as={Link}
+                      href={`/detProducto?producto=${p.id}`}
                     >
                       <i className="bi bi-info-circle"></i> Ver más
                     </Button>

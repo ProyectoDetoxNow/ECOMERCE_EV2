@@ -1,11 +1,12 @@
-"use client";
-
 import DetalleProducto from "../../components/DetalleProductos";
+import { obtenerProductoPorId } from "../../data/inventarioApi";
 
-export default function DetalleProductoPage() {
+export default async function DetalleProductoPage({ searchParams }) {
+  const id = searchParams.producto;
+  const productoEncontrado = await obtenerProductoPorId(id);
+
   return (
     <>
-      {/* Banner */}
       <div
         className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
         style={{
@@ -18,8 +19,7 @@ export default function DetalleProductoPage() {
         <h1 className="display-5 fw-bold">Detalle del Producto</h1>
       </div>
 
-      {/* Contenido principal */}
-      <DetalleProducto />
+      <DetalleProducto producto={productoEncontrado} />
     </>
   );
 }

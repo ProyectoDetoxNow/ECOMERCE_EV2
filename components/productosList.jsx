@@ -4,26 +4,25 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { obtenerProductos, eliminarProducto } from "../data/productosData";
+import { obtenerProductosApi } from "../data/inventarioApi";
 
 export default function ProductosList() {
   const [productos, setProductos] = useState([]);
 
   useEffect(() => {
-    setProductos(obtenerProductos());
+    async function cargar() {
+      const data = await obtenerProductosApi();
+      setProductos(data);
+    }
+    cargar();
   }, []);
-
-  const handleEliminar = (id) => {
-    eliminarProducto(id);
-    setProductos(obtenerProductos());
-  };
 
   return (
     <div className="container mt-4">
       <div className="row g-4">
         {productos.map((producto) => (
           <div key={producto.id} className="col-md-4">
-            <div className="card shadow h-100" style={{ cursor: "pointer" }}>
+            <div className="card shadow h-100">
               <Image
                 src={producto.imagen}
                 alt={producto.nombre}
@@ -31,6 +30,7 @@ export default function ProductosList() {
                 width={180}
                 height={180}
               />
+
               <div className="card-body">
                 <h5 className="card-title">{producto.nombre}</h5>
                 <p className="card-text">{producto.descripcion}</p>
@@ -42,12 +42,6 @@ export default function ProductosList() {
                   >
                     Ver detalle
                   </Link>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleEliminar(producto.id)}
-                  >
-                    Eliminar
-                  </button>
                 </div>
               </div>
             </div>
