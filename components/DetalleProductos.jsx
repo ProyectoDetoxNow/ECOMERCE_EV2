@@ -21,8 +21,10 @@ export default function DetalleProducto({ producto }) {
     );
   }
 
-  // En caso de que el backend te dé precio como número
   const precioDisplay = producto.precioDisplay || `$${producto.precio}`;
+
+  // Construir la ruta completa para la imagen
+  const imagenPrincipal = `/imagenes/${producto.imagen}`;
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function DetalleProducto({ producto }) {
         <div className="row g-5 align-items-center">
           <div className="col-md-6 text-center">
             <Image
-              src={`/imagenes/${encodeURIComponent(p.imagen)}`}
+              src={imagenPrincipal} // ✅ ruta corregida
               alt={producto.nombre}
               width={500}
               height={400}
@@ -80,42 +82,45 @@ export default function DetalleProducto({ producto }) {
         </div>
       </div>
 
-      {/* Productos relacionados (si el backend los provee en futuro) */}
+      {/* Productos relacionados */}
       {producto.related?.length > 0 && (
         <div className="container my-5">
           <h3 className="mb-4 text-center">Productos Relacionados</h3>
 
           <div className="row g-3 justify-content-center">
-            {producto.related.map((rel) => (
-              <div key={rel.id} className="col-md-4">
-                <div className="card shadow h-100">
-                  <Image
-                    src={rel.imagen}
-                    alt={rel.nombre}
-                    width={300}
-                    height={200}
-                    className="card-img-prod mx-auto d-block"
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "10px",
-                      marginTop: "10px",
-                    }}
-                  />
-                  <div className="card-body text-center">
-                    <h5 className="card-title">{rel.nombre}</h5>
-                    <p className="card-text text-success">
-                      {rel.precioDisplay || `$${rel.precio}`}
-                    </p>
-                    <Link
-                      href={`/detProducto?producto=${rel.id}`}
-                      className="btn btn-outline-success"
-                    >
-                      Ver detalle
-                    </Link>
+            {producto.related.map((rel) => {
+              const imagenRel = `/imagenes/${rel.imagen}`; // ✅ ruta corregida
+              return (
+                <div key={rel.id} className="col-md-4">
+                  <div className="card shadow h-100">
+                    <Image
+                      src={imagenRel}
+                      alt={rel.nombre}
+                      width={300}
+                      height={200}
+                      className="card-img-prod mx-auto d-block"
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                        marginTop: "10px",
+                      }}
+                    />
+                    <div className="card-body text-center">
+                      <h5 className="card-title">{rel.nombre}</h5>
+                      <p className="card-text text-success">
+                        {rel.precioDisplay || `$${rel.precio}`}
+                      </p>
+                      <Link
+                        href={`/detProducto?producto=${rel.id}`}
+                        className="btn btn-outline-success"
+                      >
+                        Ver detalle
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
