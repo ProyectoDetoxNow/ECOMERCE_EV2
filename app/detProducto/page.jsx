@@ -11,7 +11,7 @@ export default async function DetalleProductoPage({ searchParams }) {
       <div
         className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
         style={{
-          backgroundImage: 'url("/imagenes/primera_imag.jpg")',
+          backgroundImage: 'url("./public/imagenes/primera_imag.jpg")',
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "300px",

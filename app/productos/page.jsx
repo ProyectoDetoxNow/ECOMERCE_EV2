@@ -28,7 +28,7 @@ export default function ProductosPage() {
       {/* Banner superior */}
       <div
         style={{
-          backgroundImage: `url('/imagenes/primera_imag.jpg')`,
+          backgroundImage: `url('./public/imagenes/primera_imag.jpg')`,
           height: "300px",
           backgroundSize: "cover",
           backgroundPosition: "center",
