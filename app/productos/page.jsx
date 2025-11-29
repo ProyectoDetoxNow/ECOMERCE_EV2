@@ -10,7 +10,7 @@ import { obtenerInventario } from "@/services/inventarioApi";
 export default function ProductosPage() {
   const [productos, setProductos] = useState([]);
 
-  // Llamada a la API solo en cliente
+  // Trae los productos desde la API
   useEffect(() => {
     async function fetchProductos() {
       try {
@@ -28,7 +28,7 @@ export default function ProductosPage() {
       {/* Banner superior */}
       <div
         style={{
-          backgroundImage: `url('./public/imagenes/primera_imag.jpg')`,
+          backgroundImage: `url('/imagenes/primera_imag.jpg')`,
           height: "300px",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -44,17 +44,17 @@ export default function ProductosPage() {
 
       {/* Listado de productos */}
       <Container className="mt-5">
-        <Row className="g-4">
-          {productos.length === 0 ? (
-            <p className="text-center">Cargando productos...</p>
-          ) : (
-            productos.map((p) => (
+        {productos.length === 0 ? (
+          <p className="text-center">Cargando productos...</p>
+        ) : (
+          <Row className="g-4">
+            {productos.map((p) => (
               <Col key={p.id} md={4}>
                 <Card className="shadow text-center h-100">
                   <div className="p-3">
                     <Image
-                      src={p.imagen}
-                      alt={p.nombre}
+                      src={`/imagenes/${encodeURIComponent(p.imagen)}`}
+                      alt={p.nombreProducto}
                       width={180}
                       height={180}
                       className="mx-auto d-block rounded"
@@ -63,7 +63,7 @@ export default function ProductosPage() {
                   </div>
 
                   <Card.Body>
-                    <Card.Title>{p.nombre}</Card.Title>
+                    <Card.Title>{p.nombreProducto}</Card.Title>
                     <Card.Text>{p.descripcion}</Card.Text>
 
                     <div className="d-flex justify-content-center gap-2">
@@ -82,9 +82,9 @@ export default function ProductosPage() {
                   </Card.Body>
                 </Card>
               </Col>
-            ))
-          )}
-        </Row>
+            ))}
+          </Row>
+        )}
       </Container>
     </>
   );
