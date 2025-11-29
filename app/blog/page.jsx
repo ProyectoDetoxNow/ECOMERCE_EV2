@@ -2,9 +2,9 @@
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import BlogCard from "@/blog/BlogCard";
-import ModalCaso from "@/blog/ModalCaso";
-import { casos } from "@/blog/casosData";
+import BlogCard from "./BlogCard";
+import ModalCaso from "./ModalCaso";
+import { casos } from "./casosData";
 
 export default function BlogPage() {
   const [modalActivo, setModalActivo] = useState(null);
