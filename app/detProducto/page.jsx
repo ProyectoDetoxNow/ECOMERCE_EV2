@@ -1,5 +1,5 @@
 import DetalleProducto from "../../components/DetalleProductos";
-import { obtenerProductoPorId } from "../../data/inventarioApi";
+import { obtenerProductoPorId } from "../../services/inventarioApi";
 
 export default async function DetalleProductoPage({ searchParams }) {
   const id = searchParams.producto;
