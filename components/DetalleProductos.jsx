@@ -31,7 +31,7 @@ export default function DetalleProducto({ producto }) {
         <div className="row g-5 align-items-center">
           <div className="col-md-6 text-center">
             <Image
-              src={producto.imagen}
+              src={`/imagenes/${encodeURIComponent(p.imagen)}`}
               alt={producto.nombre}
               width={500}
               height={400}
