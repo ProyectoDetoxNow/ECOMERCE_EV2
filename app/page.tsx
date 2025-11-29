@@ -55,7 +55,7 @@ export default function HomePage() {
 
           <div className="col-md-4">
             <div className="card h-100 shadow-sm">
-              <img
+              <Image
                 src="/imagenes/primera_imag.jpg"
                 className="card-img-top"
                 alt="Producto 2"
@@ -74,7 +74,7 @@ export default function HomePage() {
 
           <div className="col-md-4">
             <div className="card h-100 shadow-sm">
-              <img
+              <Image
                 src="/imagenes/primera_imag.jpg"
                 className="card-img-top"
                 alt="Producto 3"
