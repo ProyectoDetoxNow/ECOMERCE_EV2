@@ -1,15 +1,13 @@
 "use client";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useState } from "react";
-import BlogCard from "./BlogCard";
-import ModalCaso from "./ModalCaso";
-import { casos } from "./casosData";
+import BlogCard from "@/components/BlogCard";
+import ModalCaso from "@/components/ModalCaso";
+import { casos } from "@/components/casosData";
 
 export default function BlogPage() {
   const [modalActivo, setModalActivo] = useState(null);
-
   const casoSeleccionado = casos.find((c) => c.id === modalActivo);
 
   return (
@@ -43,10 +41,7 @@ export default function BlogPage() {
             Mira este video sobre algunos batidos y sus beneficios: ¡cualquiera
             de estos lo tenemos listo para ti!
           </p>
-          <div
-            className="ratio ratio-16x9 mx-auto"
-            style={{ maxWidth: "700px" }}
-          >
+          <div className="ratio ratio-16x9 mx-auto" style={{ maxWidth: "700px" }}>
             <iframe
               src="https://www.youtube.com/embed/VSS0xHCxyDE"
               title="YouTube video player"
@@ -56,11 +51,7 @@ export default function BlogPage() {
         </section>
       </div>
 
-      <ModalCaso
-        caso={casoSeleccionado}
-        onCerrar={() => setModalActivo(null)}
-      />
+      <ModalCaso caso={casoSeleccionado} onCerrar={() => setModalActivo(null)} />
     </>
   );
 }
-//
