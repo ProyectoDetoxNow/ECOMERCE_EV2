@@ -1,11 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { useRouter } from "next/navigation";
+import { Form, Button, Spinner } from "react-bootstrap";
+import useSesion from "@/hooks/useSesion"; // 👈 Importamos nuestro hook
 
 export default function LoginForm() {
+  const router = useRouter();
+  const { iniciarSesion } = useSesion(); // 👈 usamos la función del hook
+
   const [formData, setFormData] = useState({ correo: "", password: "" });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -16,20 +22,45 @@ export default function LoginForm() {
     e.preventDefault();
     let newErrors = {};
 
-    if (!formData.correo)
+    // --- VALIDACIÓN CORREO ---
+    if (!formData.correo) {
       newErrors.correo = "Debe ingresar su correo electrónico.";
-    if (!formData.password) newErrors.password = "Debe ingresar su contraseña.";
+    } else {
+      const correoRegex = /^[\w.-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/;
+      if (!correoRegex.test(formData.correo)) {
+        newErrors.correo =
+          "Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com.";
+      }
+    }
+
+    // --- VALIDACIÓN CONTRASEÑA ---
+    if (!formData.password) {
+      newErrors.password = "Debe ingresar su contraseña.";
+    } else if (formData.password.length < 4 || formData.password.length > 10) {
+      newErrors.password = "La contraseña debe tener entre 4 y 10 caracteres.";
+    }
 
     setErrors(newErrors);
 
+    // --- SI NO HAY ERRORES ---
     if (Object.keys(newErrors).length === 0) {
-      alert("✅ Inicio de sesión exitoso!");
-      console.log("Datos enviados:", formData);
+      setIsLoading(true);
+
+      setTimeout(() => {
+        alert("✅ Inicio de sesión exitoso!");
+        iniciarSesion(formData.correo); // 👈 Guardamos la sesión
+        router.push("/productos"); // 🔄 Redirige a productos
+      }, 1500);
     }
   };
 
   return (
-    <Form onSubmit={handleSubmit} noValidate>
+    <Form
+      onSubmit={handleSubmit}
+      noValidate
+      className="p-4 bg-light shadow rounded"
+    >
+      {/* --- CORREO --- */}
       <Form.Group className="mb-3">
         <Form.Label>Correo Electrónico</Form.Label>
         <Form.Control
@@ -38,12 +69,14 @@ export default function LoginForm() {
           value={formData.correo}
           onChange={handleChange}
           isInvalid={!!errors.correo}
+          placeholder="ejemplo@duoc.cl"
         />
         <Form.Control.Feedback type="invalid">
           {errors.correo}
         </Form.Control.Feedback>
       </Form.Group>
 
+      {/* --- CONTRASEÑA --- */}
       <Form.Group className="mb-3">
         <Form.Label>Contraseña</Form.Label>
         <Form.Control
@@ -52,6 +85,7 @@ export default function LoginForm() {
           value={formData.password}
           onChange={handleChange}
           isInvalid={!!errors.password}
+          placeholder="Ingrese su contraseña"
         />
         <Form.Control.Feedback type="invalid">
           {errors.password}
@@ -64,9 +98,23 @@ export default function LoginForm() {
         </a>
       </div>
 
+      {/* --- BOTÓN --- */}
       <div className="text-center">
-        <Button type="submit" variant="success" className="w-100">
-          Iniciar Sesión
+        <Button
+          id="btnLogin"
+          type="submit"
+          variant="success"
+          className="w-100"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" />{" "}
+              Iniciando sesión...
+            </>
+          ) : (
+            "Iniciar Sesión"
+          )}
         </Button>
       </div>
     </Form>

@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Spinner } from "react-bootstrap";
 import Image from "next/image";
@@ -47,6 +48,21 @@ export default function ProductosPage() {
         <h1 className="display-5 fw-bold">Productos DetoxNow</h1>
       </div>
 
+=======
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Container, Row, Col, Card, Button } from "react-bootstrap"; // ✅ Importaciones necesarias
+import { productos } from "../../data/productos";
+import BotonAgregarCarrito from "@/components/BotonAgregarCarrito"; // ✅ Asegúrate de que exista y esté bien escrito
+
+export default function ProductosPage() {
+  const router = useRouter();
+  const listaProductos = Object.values(productos);
+
+  return (
+    <>
+      {/* Banner o cabecera */}
+>>>>>>> main
       <Container className="mt-5">
         <Row className="g-4">
           {listaProductos.map((p) => (
@@ -62,15 +78,29 @@ export default function ProductosPage() {
                     style={{ objectFit: "cover", width: "180px", height: "180px" }}
                   />
                 </div>
+
                 <Card.Body>
                   <Card.Title>{p.nombreProducto}</Card.Title>
                   <Card.Text>{`$${p.precio}`}</Card.Text>
                   <div className="d-flex justify-content-center gap-2">
+<<<<<<< HEAD
                     <Link href={`/detProducto?producto=${p.id}`} passHref>
                       <Button variant="outline-success">
                         <i className="bi bi-info-circle"></i> Ver más
                       </Button>
                     </Link>
+=======
+                    {/* ✅ Navegación sin usar window */}
+                    <Button
+                      variant="outline-success"
+                      onClick={() =>
+                        router.push(`/detProducto?producto=${p.id}`)
+                      }
+                    >
+                      <i className="bi bi-info-circle"></i> Ver más
+                    </Button>
+
+>>>>>>> main
                     <BotonAgregarCarrito
                       producto={{
                         id: p.id,

@@ -4,6 +4,11 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+<<<<<<< HEAD
+=======
+import "bootstrap/dist/css/bootstrap.min.css";
+import { useCart } from "@/components/CartContext";
+>>>>>>> main
 import BotonAgregarCarrito from "@/components/BotonAgregarCarrito";
 import { obtenerProductoPorId } from "@/services/inventarioApi";
 

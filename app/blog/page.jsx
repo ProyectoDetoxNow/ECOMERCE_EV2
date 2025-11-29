@@ -1,8 +1,7 @@
 "use client";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BlogCard from "./BlogCard";
 import ModalCaso from "./ModalCaso";
 import { casos } from "./casosData";
@@ -10,11 +9,15 @@ import { casos } from "./casosData";
 export default function BlogPage() {
   const [modalActivo, setModalActivo] = useState(null);
 
+  // ✅ Importar el JS de Bootstrap solo en el cliente
+  useEffect(() => {
+    import("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
+
   const casoSeleccionado = casos.find((c) => c.id === modalActivo);
 
   return (
     <>
-      {/* Banner */}
       <div
         className="banner-superior"
         style={{
@@ -36,7 +39,6 @@ export default function BlogPage() {
           <BlogCard key={caso.id} caso={caso} onVerCaso={setModalActivo} />
         ))}
 
-        {/* Video */}
         <section className="container my-5 text-center">
           <h2 className="mb-3">Video destacado</h2>
           <p>

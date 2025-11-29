@@ -24,16 +24,29 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
+<<<<<<< HEAD
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {/* Proveedor de carrito */}
+=======
+    <html lang="es">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {/* ✅ Contexto global del carrito */}
+>>>>>>> main
         <CartProvider>
+          {/* ⚠️ Importante: asegúrate que NavBarDetox tenga "use client" arriba */}
           <NavBarDetox />
           <main>{children}</main>
           <Footer />
         </CartProvider>
 
+<<<<<<< HEAD
         {/* Script de Bootstrap */}
+=======
+        {/* ✅ Cargar Bootstrap JS solo en cliente */}
+>>>>>>> main
         <Script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
           strategy="afterInteractive"
