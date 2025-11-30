@@ -1,11 +1,42 @@
 "use client";
+
 import { useCart } from "@/components/CartContext";
 import Link from "next/link";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useState } from "react";
 
 export default function NavBarDetox() {
   const { totalQuantity } = useCart();
+
+  const [usuario, setUsuario] = useState(null);
+
+  // Cargar el usuario desde localStorage al iniciar
+  useEffect(() => {
+    const storedUser = localStorage.getItem("usuario");
+    if (storedUser) {
+      setUsuario(JSON.parse(storedUser));
+    }
+
+    // Escuchar cambios cuando el login actualiza localStorage
+    const syncUser = () => {
+      const updatedUser = localStorage.getItem("usuario");
+      setUsuario(updatedUser ? JSON.parse(updatedUser) : null);
+    };
+
+    window.addEventListener("storage", syncUser);
+
+    return () => {
+      window.removeEventListener("storage", syncUser);
+    };
+  }, []);
+
+  // Cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem("usuario");
+    setUsuario(null);
+    window.dispatchEvent(new Event("storage")); // Para que se actualice navbar
+  };
 
   return (
     <Navbar expand="lg" className="shadow-sm bg-light py-3">
@@ -63,16 +94,37 @@ export default function NavBarDetox() {
           </Nav>
 
           <div className="d-flex align-items-center gap-3">
-            <Link href="/login" className="text-success text-decoration-none">
-              Iniciar sesión
-            </Link>
-            <span className="text-success fw-bold">|</span>
-            <Link
-              href="/registro"
-              className="text-success text-decoration-none"
-            >
-              Registro
-            </Link>
+            {usuario ? (
+              // 🔥 Vista cuando el usuario está logueado
+              <>
+                <span className="text-success fw-semibold">
+                  Hola, {usuario.nombre}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="btn btn-outline-danger btn-sm"
+                >
+                  Cerrar sesión
+                </button>
+              </>
+            ) : (
+              // 🔥 Vista cuando no hay usuario
+              <>
+                <Link
+                  href="/login"
+                  className="text-success text-decoration-none"
+                >
+                  Iniciar sesión
+                </Link>
+                <span className="text-success fw-bold">|</span>
+                <Link
+                  href="/registro"
+                  className="text-success text-decoration-none"
+                >
+                  Registro
+                </Link>
+              </>
+            )}
 
             <Link
               href="/carrito"

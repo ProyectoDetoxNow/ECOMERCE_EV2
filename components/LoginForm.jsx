@@ -54,9 +54,9 @@ export default function LoginForm() {
 
       // Guardar en localStorage (opcional)
       localStorage.setItem("usuario", JSON.stringify(usuario));
+      window.dispatchEvent(new Event("storage"));
 
       alert("Inicio de sesión exitoso");
-
       console.log("Usuario logueado:", usuario);
 
       // Aquí puedes redirigir a dashboard o home
