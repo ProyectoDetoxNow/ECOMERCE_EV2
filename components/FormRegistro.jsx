@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, Alert } from "react-bootstrap";
 
 export default function RegistroForm() {
   // --- Estados del formulario ---
@@ -17,6 +17,9 @@ export default function RegistroForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const [apiSuccess, setApiSuccess] = useState("");
+
   const [passwordRequirements, setPasswordRequirements] = useState({
     longitud: false,
     mayuscula: false,
@@ -44,7 +47,6 @@ export default function RegistroForm() {
     if (id === "password") validatePassword(value);
   };
 
-  // --- Validación en tiempo real de confirmación ---
   useEffect(() => {
     if (formData.confirmPassword) {
       if (formData.confirmPassword !== formData.password) {
@@ -61,16 +63,18 @@ export default function RegistroForm() {
     }
   }, [formData.password, formData.confirmPassword]);
 
-  // --- Envío del formulario ---
-  const handleSubmit = (e) => {
+  // --- Envío ---
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError("");
+    setApiSuccess("");
+
     let newErrors = {};
 
-    // Validación de nombre
+    // VALIDACIONES
     if (!formData.nombre.trim() || formData.nombre.length > 100)
       newErrors.nombre = "Debe ingresar su nombre (máx. 100 caracteres).";
 
-    // Validación de correo
     if (
       !/^[\w.%+-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/i.test(
         formData.correo
@@ -80,24 +84,49 @@ export default function RegistroForm() {
       newErrors.correo =
         "Correo inválido. Solo se aceptan @duoc.cl, @profesor.duoc.cl o @gmail.com.";
 
-    // Validación de contraseña con regex global
     const passRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{4,10}$/;
+
     if (!passRegex.test(formData.password))
       newErrors.password = "La contraseña no cumple con los requisitos.";
 
-    // Confirmar contraseña
     if (formData.confirmPassword !== formData.password)
       newErrors.confirmPassword = "Las contraseñas no coinciden.";
 
     setErrors(newErrors);
 
-    // Si todo está correcto
-    if (Object.keys(newErrors).length === 0) {
-      alert("✅ Registro exitoso!");
-      console.log(formData);
+    if (Object.keys(newErrors).length > 0) return;
 
-      // Resetear formulario
+    // --- Payload para el backend ---
+    const payload = {
+      nombre: formData.nombre,
+      correo: formData.correo,
+      password: formData.password,
+      telefono: formData.telefono,
+      direccion: formData.direccion,
+      region: formData.region,
+      comuna: formData.comuna,
+    };
+
+    try {
+      const res = await fetch(
+        "https://radiant-solace-production-febb.up.railway.app/api/usuarios",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        setApiError(errorText);
+        return;
+      }
+
+      setApiSuccess("Registro exitoso!");
+
+      // Reset formulario
       setFormData({
         nombre: "",
         correo: "",
@@ -108,6 +137,7 @@ export default function RegistroForm() {
         region: "",
         comuna: "",
       });
+
       setPasswordRequirements({
         longitud: false,
         mayuscula: false,
@@ -115,11 +145,17 @@ export default function RegistroForm() {
         numero: false,
         especial: false,
       });
+    } catch (error) {
+      console.error(error);
+      setApiError("Error al conectar con el servidor.");
     }
   };
 
   return (
     <Form onSubmit={handleSubmit} noValidate>
+      {apiError && <Alert variant="danger">{apiError}</Alert>}
+      {apiSuccess && <Alert variant="success">{apiSuccess}</Alert>}
+
       <Form.Group className="mb-3">
         <Form.Label>Nombre Completo</Form.Label>
         <Form.Control
