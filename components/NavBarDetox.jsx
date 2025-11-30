@@ -98,7 +98,7 @@ export default function NavBarDetox() {
               // 🔥 Vista cuando el usuario está logueado
               <>
                 <span className="text-success fw-semibold">
-                  Hola, {usuario.nombre}
+                  Hola {usuario.nombre}
                 </span>
                 <button
                   onClick={handleLogout}
