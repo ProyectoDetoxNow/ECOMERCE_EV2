@@ -33,14 +33,17 @@ export default function LoginForm() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/usuarios/login", {
-        // CAMBIAR cuando despliegues a Railway!!!
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://radiant-solace-production-febb.up.railway.app/api/usuarios/login",
+        {
+          // CAMBIAR cuando despliegues a Railway!!!
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -52,7 +55,7 @@ export default function LoginForm() {
       // Guardar en localStorage (opcional)
       localStorage.setItem("usuario", JSON.stringify(usuario));
 
-      alert("✅ Inicio de sesión exitoso");
+      alert("Inicio de sesión exitoso");
 
       console.log("Usuario logueado:", usuario);
 
