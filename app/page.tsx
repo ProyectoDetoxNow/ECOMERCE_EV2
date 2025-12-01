@@ -1,6 +1,5 @@
 "use client";
-import "bootstrap/dist/css/bootstrap.min.css";
-//import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
@@ -28,19 +27,19 @@ export default function HomePage() {
         <hr className="my-5" />
 
         <div className="row g-4">
+          {/* Tarjeta 1 */}
           <div className="col-md-4">
             <div className="card h-100 shadow-sm">
-              <Col xs={6} md={4}>
+              <Col xs={6} md={12}>
                 <Image
                   src="/imagenes/Producto 1.jpg"
-                  className="card-img-top"
                   alt="Producto 1"
-                  width={200}
+                  width={300}
                   height={200}
+                  className="card-img-top img-fluid rounded"
                   style={{ marginTop: "20px" }}
                 />
               </Col>
-
               <div className="card-body">
                 <h5 className="card-title text-success">Jugos Detox</h5>
                 <p className="card-text">
@@ -54,12 +53,15 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Tarjeta 2 */}
           <div className="col-md-4">
             <div className="card h-100 shadow-sm">
               <Image
                 src="/imagenes/primera_imag.jpg"
-                className="card-img-top"
                 alt="Producto 2"
+                width={300}
+                height={200}
+                className="card-img-top img-fluid rounded"
               />
               <div className="card-body">
                 <h5 className="card-title text-success">Snacks Saludables</h5>
@@ -73,12 +75,15 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Tarjeta 3 */}
           <div className="col-md-4">
             <div className="card h-100 shadow-sm">
               <Image
                 src="/imagenes/primera_imag.jpg"
-                className="card-img-top"
                 alt="Producto 3"
+                width={300}
+                height={200}
+                className="card-img-top img-fluid rounded"
               />
               <div className="card-body">
                 <h5 className="card-title text-success">Tés & Infusiones</h5>
