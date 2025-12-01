@@ -1,4 +1,4 @@
-// pruebaconexion/apiCarrito.jsx
+// service/apiCarrito.jsx
 const API_URL =
   "https://apicarrito-production-1136.up.railway.app/Api/v1/Carrito";
 

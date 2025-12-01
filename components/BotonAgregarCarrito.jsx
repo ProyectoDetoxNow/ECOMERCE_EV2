@@ -1,6 +1,6 @@
 "use client";
 
-import { agregarAlCarrito } from "@/services/apiCarrito";
+import { crearOAgregar } from "@/services/apiCarrito";
 
 export default function BotonAgregarCarrito({
   producto,
@@ -11,7 +11,7 @@ export default function BotonAgregarCarrito({
 
   const handleAgregar = async () => {
     try {
-      const data = await agregarAlCarrito(ID_USUARIO, producto.id, cantidad);
+      const data = await crearOAgregar(ID_USUARIO, producto.id, cantidad);
 
       localStorage.setItem("idCarrito", data.id);
 
