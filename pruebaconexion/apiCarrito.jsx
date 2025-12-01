@@ -1,6 +1,6 @@
 // pruebaconexion/apiCarrito.jsx
 const API_URL =
-  "https://apicarrito-production-xxxx.up.railway.app/Api/v1/Carrito";
+  "https://apicarrito-production-1136.up.railway.app/Api/v1/Carrito";
 
 export const getCarrito = async (idCarrito) => {
   const res = await fetch(`${API_URL}/${idCarrito}`);
