@@ -2,7 +2,7 @@
 
 export default function BotonAgregarCarrito({ producto, className = "" }) {
   const API_URL =
-    "https://apicarrito-production-xxxx.up.railway.app/Api/v1/Carrito"; // 🔥 Cambia por tu URL real
+    "https://apicarrito-production-1136.up.railway.app/Api/v1/Carrito"; // 🔥 Cambia por tu URL real
 
   const ID_USUARIO = 1; // Usuario fijo temporal
 
