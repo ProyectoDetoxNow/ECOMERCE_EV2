@@ -58,7 +58,11 @@ export default function ProductosPage() {
                       width={180}
                       height={180}
                       className="mx-auto d-block rounded"
-                      style={{ objectFit: "cover", width: "180px", height: "180px" }}
+                      style={{
+                        objectFit: "cover",
+                        width: "180px",
+                        height: "180px",
+                      }}
                     />
                   </div>
 
@@ -77,7 +81,10 @@ export default function ProductosPage() {
                       </Button>
 
                       {/* Botón Agregar al carrito */}
-                      <BotonAgregarCarrito producto={p} className="btn btn-success" />
+                      <BotonAgregarCarrito
+                        producto={p}
+                        className="btn btn-success"
+                      />
                     </div>
                   </Card.Body>
                 </Card>
