@@ -6,7 +6,7 @@ import {
   crearOAgregar,
   updateCantidad,
   deleteProducto,
-} from "@/service/apiCarrito";
+} from "@/services/apiCarrito";
 
 const ID_USUARIO = 1; // Usuario fijo
 
