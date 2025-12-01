@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useCart } from "@/components/CartContext";
 import BotonAgregarCarrito from "@/components/BotonAgregarCarrito";
 
