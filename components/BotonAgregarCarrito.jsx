@@ -1,23 +1,18 @@
 "use client";
 
-export default function BotonAgregarCarrito({ producto, className = "" }) {
-  const API_URL =
-    "https://apicarrito-production-1136.up.railway.app/Api/v1/Carrito"; // 🔥 Cambia por tu URL real
+import { agregarAlCarrito } from "@/services/carritoApi";
 
-  const ID_USUARIO = 1; // Usuario fijo temporal
+export default function BotonAgregarCarrito({
+  producto,
+  cantidad = 1,
+  className = "",
+}) {
+  const ID_USUARIO = 1; // ⚠️ Temporal
 
   const handleAgregar = async () => {
     try {
-      const res = await fetch(
-        `${API_URL}/agregar/${ID_USUARIO}/${producto.id}/1`,
-        { method: "POST" }
-      );
+      const data = await agregarAlCarrito(ID_USUARIO, producto.id, cantidad);
 
-      if (!res.ok) throw new Error("Error al agregar");
-
-      const data = await res.json();
-
-      // Guardar id del carrito para seguir usando
       localStorage.setItem("idCarrito", data.id);
 
       alert(`${producto.nombre} agregado al carrito 🛒`);

@@ -6,7 +6,7 @@ import {
   crearOAgregar,
   updateCantidad,
   deleteProducto,
-} from "@/pruebaconexion/apiCarrito";
+} from "@/service/apiCarrito";
 
 const ID_USUARIO = 1; // Usuario fijo
 
@@ -147,7 +147,6 @@ export default function CarritoPage() {
           </a>
         </div>
       )}
-      
     </div>
   );
 }
