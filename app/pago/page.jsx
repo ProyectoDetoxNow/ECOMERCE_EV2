@@ -11,11 +11,32 @@ export default function PagoPage() {
   const [correo, setCorreo] = useState("");
   const [metodoPago, setMetodoPago] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(
-      `Gracias por tu compra, ${nombre} ${apellidos}!\nTotal a pagar: $${totalPrice}`
-    );
+
+    // Obtener ID del usuario guardado
+    const usuarioActivo = localStorage.getItem("usuarioActivo");
+    const idUsuario = usuarioActivo || 1; // TEMPORAL hasta tener login real
+
+    try {
+      const response = await fetch(
+        `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/crear/${idUsuario}?total=${totalPrice}`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al procesar el pago");
+      }
+
+      alert(
+        `Gracias por tu compra, ${nombre} ${apellidos}!\nTotal pagado: $${totalPrice}`
+      );
+    } catch (error) {
+      alert("Error al registrar el pago");
+      console.error(error);
+    }
   };
 
   return (
@@ -33,10 +54,10 @@ export default function PagoPage() {
         <h1 className="display-5 fw-bold">Pago Seguro</h1>
       </div>
 
-      {/* Formulario y Resumen del carrito */}
+      {/* Formulario y Resumen */}
       <div className="container my-5">
         <div className="row">
-          {/* Formulario de pago */}
+          {/* Formulario */}
           <div className="col-md-6 mb-4">
             <h2 className="text-center mb-4">Formulario de Pago</h2>
             <form
@@ -71,6 +92,7 @@ export default function PagoPage() {
                   />
                 </div>
               </div>
+
               <div className="mb-3">
                 <label htmlFor="correo" className="form-label">
                   Correo
@@ -84,6 +106,7 @@ export default function PagoPage() {
                   required
                 />
               </div>
+
               <div className="mb-3">
                 <label htmlFor="metodoPago" className="form-label">
                   Método de Pago
@@ -101,13 +124,14 @@ export default function PagoPage() {
                   <option value="paypal">PayPal</option>
                 </select>
               </div>
+
               <button type="submit" className="btn btn-success w-100">
                 Pagar
               </button>
             </form>
           </div>
 
-          {/* Resumen del carrito */}
+          {/* Resumen */}
           <div className="col-md-6">
             <h2 className="text-center mb-4">Resumen de tu compra</h2>
             {cartItems.length === 0 ? (
@@ -131,6 +155,7 @@ export default function PagoPage() {
                     </span>
                   </div>
                 ))}
+
                 <div className="list-group-item d-flex justify-content-between align-items-center fw-bold">
                   Total:
                   <span>${totalPrice.toLocaleString()}</span>

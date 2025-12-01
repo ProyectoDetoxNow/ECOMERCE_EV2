@@ -1,79 +1,153 @@
 "use client";
-import { useCart } from "@/components/CartContext";
-import Link from "next/link";
+
+import { useState, useEffect } from "react";
+import {
+  getCarrito,
+  crearOAgregar,
+  updateCantidad,
+  deleteProducto,
+} from "@/pruebaconexion/apiCarrito";
+
+const ID_USUARIO = 1; // Usuario fijo
 
 export default function CarritoPage() {
-  const {
-    cartItems,
-    totalQuantity,
-    totalPrice,
-    changeQuantity,
-    removeFromCart,
-  } = useCart();
+  const [carrito, setCarrito] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  if (cartItems.length === 0)
-    return <p className="text-center mt-5">Tu carrito está vacío 🛒</p>;
+  // ----------------------------------------------
+  // Cargar carrito si existe en localStorage
+  // ----------------------------------------------
+  useEffect(() => {
+    const idGuardado = localStorage.getItem("idCarrito");
 
+    if (idGuardado) {
+      cargarCarrito(idGuardado);
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  // ----------------------------------------------
+  // Función para cargar carrito
+  // ----------------------------------------------
+  const cargarCarrito = async (idCarrito) => {
+    try {
+      const data = await getCarrito(idCarrito);
+      setCarrito(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ----------------------------------------------
+  // Agregar producto
+  // ----------------------------------------------
+  const agregarProducto = async (idProducto, cantidad) => {
+    try {
+      const data = await crearOAgregar(ID_USUARIO, idProducto, cantidad);
+
+      localStorage.setItem("idCarrito", data.id); // guardar carrito
+
+      setCarrito(data);
+    } catch {
+      setError("Error agregando producto");
+    }
+  };
+
+  // ----------------------------------------------
+  // Actualizar cantidad
+  // ----------------------------------------------
+  const actualizarCantidad = async (idProducto, cantidad) => {
+    if (!carrito) return;
+
+    await updateCantidad(carrito.id, idProducto, cantidad);
+
+    cargarCarrito(carrito.id);
+  };
+
+  // ----------------------------------------------
+  // Eliminar producto
+  // ----------------------------------------------
+  const eliminarProducto = async (idProducto) => {
+    if (!carrito) return;
+
+    await deleteProducto(carrito.id, idProducto);
+
+    cargarCarrito(carrito.id);
+  };
+
+  // ----------------------------------------------
+  // LOADING & ERROR
+  // ----------------------------------------------
+  if (loading) return <p>Cargando carrito...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  // ----------------------------------------------
+  // RENDER
+  // ----------------------------------------------
   return (
     <div className="container my-5">
-      <h1 className="text-center mb-4">🛒 Tu Carrito ({totalQuantity})</h1>
+      <h1 className="mb-4 text-center">Mi Carrito 🛒</h1>
 
-      {cartItems.map((item) => (
-        <div
-          key={item.id}
-          className="d-flex align-items-center border-bottom py-2 justify-content-between"
-        >
-          <div className="d-flex align-items-center">
-            <img
-              src={item.imagen}
-              alt={item.nombre}
-              style={{ width: "60px", height: "60px", objectFit: "cover" }}
-              className="me-3 rounded"
-            />
-            <div>
-              <strong>{item.nombre}</strong>
-              <br />
-              <small className="text-muted">{item.descripcion}</small>
+      {!carrito || carrito.detalleCarrito.length === 0 ? (
+        <p className="text-center">Tu carrito está vacío.</p>
+      ) : (
+        <div className="list-group">
+          {carrito.detalleCarrito.map((item) => (
+            <div
+              key={item.id}
+              className="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <div>
+                <strong>Producto ID: {item.idProducto}</strong>
+                <br />
+                Cantidad: {item.cantidad}
+              </div>
+
+              <div className="d-flex gap-2">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() =>
+                    actualizarCantidad(item.idProducto, item.cantidad + 1)
+                  }
+                >
+                  +
+                </button>
+
+                <button
+                  className="btn btn-secondary"
+                  onClick={() =>
+                    item.cantidad > 1 &&
+                    actualizarCantidad(item.idProducto, item.cantidad - 1)
+                  }
+                >
+                  -
+                </button>
+
+                <button
+                  className="btn btn-danger"
+                  onClick={() => eliminarProducto(item.idProducto)}
+                >
+                  X
+                </button>
+              </div>
             </div>
+          ))}
+
+          <div className="list-group-item fw-bold d-flex justify-content-between">
+            Total:
+            <span>${carrito.total}</span>
           </div>
 
-          <div>${item.precio}</div>
-
-          <div className="d-flex align-items-center">
-            <button
-              className="btn btn-sm btn-outline-secondary"
-              onClick={() => changeQuantity(item.id, "restar")}
-            >
-              −
-            </button>
-            <span className="mx-2">{item.quantity}</span>
-            <button
-              className="btn btn-sm btn-outline-secondary"
-              onClick={() => changeQuantity(item.id, "sumar")}
-            >
-              +
-            </button>
-          </div>
-
-          <div className="text-end">
-            <strong>${item.precio * item.quantity}</strong>
-            <button
-              className="btn btn-sm btn-danger ms-2"
-              onClick={() => removeFromCart(item.id)}
-            >
-              ✕
-            </button>
-          </div>
+          <a href="/pago" className="btn btn-success mt-3">
+            Ir a pagar
+          </a>
         </div>
-      ))}
-
-      {/* Total + Botón Pagar */}
-      <div className="mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
-        <h5>Total: ${totalPrice}</h5>
-        <Link href="/pago" className="btn btn-success btn-lg">
-          Pagar
-        </Link>
-      </div>
+      )}
+      
     </div>
   );
 }
