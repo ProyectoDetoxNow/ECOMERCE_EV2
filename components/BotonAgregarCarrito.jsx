@@ -1,6 +1,6 @@
 "use client";
 
-import { agregarAlCarrito } from "@/services/carritoApi";
+import { agregarAlCarrito } from "@/services/apiCarrito";
 
 export default function BotonAgregarCarrito({
   producto,
