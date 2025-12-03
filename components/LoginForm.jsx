@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Form, Button, Spinner } from "react-bootstrap";
-import useSesion from "@/hooks/useSesion"; // 👈 Importamos nuestro hook
+import useSesion from "@/hooks/useSesion"; // Hook personalizado
 
 export default function LoginForm() {
   const router = useRouter();
-  const { iniciarSesion } = useSesion(); // 👈 usamos la función del hook
+  const { iniciarSesion } = useSesion();
 
   const [formData, setFormData] = useState({ correo: "", password: "" });
   const [errors, setErrors] = useState({});
@@ -18,39 +18,47 @@ export default function LoginForm() {
     setFormData({ ...formData, [id]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
 
-    // --- VALIDACIÓN CORREO ---
     if (!formData.correo) {
       newErrors.correo = "Debe ingresar su correo electrónico.";
-    } else {
-      const correoRegex = /^[\w.-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/;
-      if (!correoRegex.test(formData.correo)) {
-        newErrors.correo =
-          "Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com.";
-      }
     }
 
-    // --- VALIDACIÓN CONTRASEÑA ---
     if (!formData.password) {
       newErrors.password = "Debe ingresar su contraseña.";
-    } else if (formData.password.length < 4 || formData.password.length > 10) {
-      newErrors.password = "La contraseña debe tener entre 4 y 10 caracteres.";
     }
 
     setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
-    // --- SI NO HAY ERRORES ---
-    if (Object.keys(newErrors).length === 0) {
-      setIsLoading(true);
+    setIsLoading(true);
 
-      setTimeout(() => {
-        alert("✅ Inicio de sesión exitoso!");
-        iniciarSesion(formData.correo); // 👈 Guardamos la sesión
-        router.push("/productos"); // 🔄 Redirige a productos
-      }, 1500);
+    try {
+      const response = await fetch(
+        "https://radiant-solace-production-febb.up.railway.app/api/usuarios/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setIsLoading(false);
+        alert("❌ " + (data.mensaje || "Credenciales inválidas"));
+        return;
+      }
+
+      // 🔥 Guardar sesión
+      iniciarSesion(formData.correo);
+
+      router.push("/productos");
+    } catch (error) {
+      alert("⚠️ Error conectando al servidor.");
     }
   };
 
@@ -60,7 +68,7 @@ export default function LoginForm() {
       noValidate
       className="p-4 bg-light shadow rounded"
     >
-      {/* --- CORREO --- */}
+      {/* CORREO */}
       <Form.Group className="mb-3">
         <Form.Label>Correo Electrónico</Form.Label>
         <Form.Control
@@ -76,7 +84,7 @@ export default function LoginForm() {
         </Form.Control.Feedback>
       </Form.Group>
 
-      {/* --- CONTRASEÑA --- */}
+      {/* CONTRASEÑA */}
       <Form.Group className="mb-3">
         <Form.Label>Contraseña</Form.Label>
         <Form.Control
@@ -98,7 +106,7 @@ export default function LoginForm() {
         </a>
       </div>
 
-      {/* --- BOTÓN --- */}
+      {/* BOTÓN */}
       <div className="text-center">
         <Button
           id="btnLogin"
@@ -109,7 +117,7 @@ export default function LoginForm() {
         >
           {isLoading ? (
             <>
-              <Spinner animation="border" size="sm" className="me-2" />{" "}
+              <Spinner animation="border" size="sm" className="me-2" />
               Iniciando sesión...
             </>
           ) : (
