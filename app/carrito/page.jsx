@@ -47,12 +47,14 @@ export default function CarritoPage() {
   // ----------------------------------------------
   const agregarProducto = async (idProducto, cantidad) => {
     try {
-      const data = await crearOAgregar(ID_USUARIO, idProducto, cantidad);
+      const idCarrito = localStorage.getItem("idCarrito");
 
-      localStorage.setItem("idCarrito", data.id); // guardar carrito
+      const data = await crearOAgregar(idCarrito, idProducto, cantidad);
+
+      localStorage.setItem("idCarrito", data.id);
 
       setCarrito(data);
-    } catch {
+    } catch (err) {
       setError("Error agregando producto");
     }
   };
