@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 
 export default function RegistroForm() {
-  // --- Estados del formulario ---
   const [formData, setFormData] = useState({
     nombre: "",
     correo: "",
@@ -25,7 +24,7 @@ export default function RegistroForm() {
     especial: false,
   });
 
-  // --- Validar requisitos de contraseña dinámicamente ---
+  // Validación dinámica de contraseña
   const validatePassword = (password) => {
     setPasswordRequirements({
       longitud: password.length >= 4 && password.length <= 10,
@@ -36,7 +35,6 @@ export default function RegistroForm() {
     });
   };
 
-  // --- Actualizar campos ---
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
@@ -44,7 +42,7 @@ export default function RegistroForm() {
     if (id === "password") validatePassword(value);
   };
 
-  // --- Validación en tiempo real de confirmación ---
+  // Sincronizar confirmación
   useEffect(() => {
     if (formData.confirmPassword) {
       if (formData.confirmPassword !== formData.password) {
@@ -61,43 +59,63 @@ export default function RegistroForm() {
     }
   }, [formData.password, formData.confirmPassword]);
 
-  // --- Envío del formulario ---
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
 
-    // Validación de nombre
+    // VALIDACIONES
     if (!formData.nombre.trim() || formData.nombre.length > 100)
       newErrors.nombre = "Debe ingresar su nombre (máx. 100 caracteres).";
 
-    // Validación de correo
     if (
       !/^[\w.%+-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/i.test(
         formData.correo
-      ) ||
-      formData.correo.length > 100
-    )
+      )
+    ) {
       newErrors.correo =
         "Correo inválido. Solo se aceptan @duoc.cl, @profesor.duoc.cl o @gmail.com.";
+    }
 
-    // Validación de contraseña con regex global
     const passRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{4,10}$/;
+
     if (!passRegex.test(formData.password))
       newErrors.password = "La contraseña no cumple con los requisitos.";
 
-    // Confirmar contraseña
     if (formData.confirmPassword !== formData.password)
       newErrors.confirmPassword = "Las contraseñas no coinciden.";
 
     setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
-    // Si todo está correcto
-    if (Object.keys(newErrors).length === 0) {
+    // Enviar al Backend real
+    try {
+      const response = await fetch(
+        "https://radiant-solace-production-febb.up.railway.app/api/usuarios",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nombre: formData.nombre,
+            correo: formData.correo,
+            password: formData.password,
+            telefono: formData.telefono,
+            direccion: formData.direccion,
+            region: formData.region,
+            comuna: formData.comuna,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        alert("❌ Error en el registro: " + errorData);
+        return;
+      }
+
       alert("✅ Registro exitoso!");
-      console.log(formData);
 
-      // Resetear formulario
+      // Limpiar formulario
       setFormData({
         nombre: "",
         correo: "",
@@ -108,18 +126,14 @@ export default function RegistroForm() {
         region: "",
         comuna: "",
       });
-      setPasswordRequirements({
-        longitud: false,
-        mayuscula: false,
-        minuscula: false,
-        numero: false,
-        especial: false,
-      });
+    } catch (error) {
+      alert("⚠️ Error de conexión con el servidor.");
     }
   };
 
   return (
     <Form onSubmit={handleSubmit} noValidate>
+      {/* NOMBRE */}
       <Form.Group className="mb-3">
         <Form.Label>Nombre Completo</Form.Label>
         <Form.Control
@@ -134,6 +148,7 @@ export default function RegistroForm() {
         </Form.Control.Feedback>
       </Form.Group>
 
+      {/* CORREO */}
       <Form.Group className="mb-3">
         <Form.Label>Correo Electrónico</Form.Label>
         <Form.Control
@@ -143,11 +158,12 @@ export default function RegistroForm() {
           onChange={handleChange}
           isInvalid={!!errors.correo}
         />
-        <Form.Control.Feedback id="correoFeedback" type="invalid">
+        <Form.Control.Feedback type="invalid">
           {errors.correo}
         </Form.Control.Feedback>
       </Form.Group>
 
+      {/* CONTRASEÑA */}
       <Form.Group className="mb-3">
         <Form.Label>Contraseña</Form.Label>
         <Form.Control
@@ -157,7 +173,7 @@ export default function RegistroForm() {
           onChange={handleChange}
           isInvalid={!!errors.password}
         />
-        <Form.Control.Feedback id="passwordFeedback" type="invalid">
+        <Form.Control.Feedback type="invalid">
           {errors.password}
         </Form.Control.Feedback>
 
@@ -204,6 +220,7 @@ export default function RegistroForm() {
         </div>
       </Form.Group>
 
+      {/* CONFIRM PASSWORD */}
       <Form.Group className="mb-3">
         <Form.Label>Confirmar Contraseña</Form.Label>
         <Form.Control
@@ -213,11 +230,12 @@ export default function RegistroForm() {
           onChange={handleChange}
           isInvalid={!!errors.confirmPassword}
         />
-        <Form.Control.Feedback id="confirmPasswordFeedback" type="invalid">
+        <Form.Control.Feedback type="invalid">
           {errors.confirmPassword}
         </Form.Control.Feedback>
       </Form.Group>
 
+      {/* TELÉFONO */}
       <Form.Group className="mb-3">
         <Form.Label>Teléfono (opcional)</Form.Label>
         <Form.Control
@@ -228,6 +246,7 @@ export default function RegistroForm() {
         />
       </Form.Group>
 
+      {/* DIRECCIÓN */}
       <Form.Group className="mb-3">
         <Form.Label>Dirección</Form.Label>
         <Form.Control
@@ -238,6 +257,7 @@ export default function RegistroForm() {
         />
       </Form.Group>
 
+      {/* REGION / COMUNA */}
       <Row>
         <Col md={6}>
           <Form.Group className="mb-3">
