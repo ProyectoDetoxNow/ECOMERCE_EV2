@@ -91,7 +91,8 @@ export default function RegistroForm() {
     // Enviar al Backend real
     try {
       const response = await fetch(
-        "https://radiant-solace-production-febb.up.railway.app/api/usuarios",
+        "https://apiusuario-production-81bf.up.railway.app/api/usuarios",
+        
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
