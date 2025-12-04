@@ -12,7 +12,8 @@ export const getCarrito = async (idCarrito) => {
 
 // Crear carrito o agregar producto
 export const crearOAgregar = async (idCarrito, idProducto, cantidad) => {
-  const carritoId = Number(idCarrito) || 0;
+  // 🔥 Enviar exactamente "null" cuando no hay carrito existente
+  const carritoId = idCarrito ? idCarrito : "null";
 
   const res = await fetch(
     `${API_URL}/agregar/${carritoId}/${idProducto}/${cantidad}`,
