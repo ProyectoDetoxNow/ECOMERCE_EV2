@@ -9,7 +9,7 @@ export default function BotonAgregarCarrito({
 }) {
   const handleAgregar = async () => {
     try {
-      const idCarrito = localStorage.getItem("idCarrito");
+      const idCarrito = Number(localStorage.getItem("idCarrito")) || 0;
 
       const data = await crearOAgregar(idCarrito, producto.id, cantidad);
 

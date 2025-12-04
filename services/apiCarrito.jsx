@@ -1,7 +1,9 @@
+// service/apiCarrito.jsx
+
 const API_URL =
   "https://apicarrito-production-1136.up.railway.app/Api/v1/Carrito";
 
-// Obtener carrito
+// Obtener carrito por ID
 export const getCarrito = async (idCarrito) => {
   const res = await fetch(`${API_URL}/${idCarrito}`);
   if (!res.ok) throw new Error("No se pudo cargar el carrito");
@@ -10,7 +12,7 @@ export const getCarrito = async (idCarrito) => {
 
 // Crear carrito o agregar producto
 export const crearOAgregar = async (idCarrito, idProducto, cantidad) => {
-  const carritoId = idCarrito ?? 0;
+  const carritoId = Number(idCarrito) || 0;
 
   const res = await fetch(
     `${API_URL}/agregar/${carritoId}/${idProducto}/${cantidad}`,
@@ -21,6 +23,7 @@ export const crearOAgregar = async (idCarrito, idProducto, cantidad) => {
   return res.json();
 };
 
+// Actualizar cantidad
 export const updateCantidad = async (idCarrito, idProducto, cantidad) => {
   const res = await fetch(`${API_URL}/${idCarrito}/producto/${idProducto}`, {
     method: "PUT",
@@ -32,6 +35,7 @@ export const updateCantidad = async (idCarrito, idProducto, cantidad) => {
   return res.json();
 };
 
+// Eliminar producto
 export const deleteProducto = async (idCarrito, idProducto) => {
   const res = await fetch(`${API_URL}/${idCarrito}/producto/${idProducto}`, {
     method: "DELETE",

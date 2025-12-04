@@ -8,8 +8,6 @@ import {
   deleteProducto,
 } from "@/services/apiCarrito";
 
-const ID_USUARIO = 1; // Usuario fijo
-
 export default function CarritoPage() {
   const [carrito, setCarrito] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,9 +17,9 @@ export default function CarritoPage() {
   // Cargar carrito si existe en localStorage
   // ----------------------------------------------
   useEffect(() => {
-    const idGuardado = localStorage.getItem("idCarrito");
+    const idGuardado = Number(localStorage.getItem("idCarrito"));
 
-    if (idGuardado) {
+    if (idGuardado && idGuardado > 0) {
       cargarCarrito(idGuardado);
     } else {
       setLoading(false);
@@ -43,30 +41,12 @@ export default function CarritoPage() {
   };
 
   // ----------------------------------------------
-  // Agregar producto
-  // ----------------------------------------------
-  const agregarProducto = async (idProducto, cantidad) => {
-    try {
-      const idCarrito = localStorage.getItem("idCarrito");
-
-      const data = await crearOAgregar(idCarrito, idProducto, cantidad);
-
-      localStorage.setItem("idCarrito", data.id);
-
-      setCarrito(data);
-    } catch (err) {
-      setError("Error agregando producto");
-    }
-  };
-
-  // ----------------------------------------------
   // Actualizar cantidad
   // ----------------------------------------------
   const actualizarCantidad = async (idProducto, cantidad) => {
     if (!carrito) return;
 
     await updateCantidad(carrito.id, idProducto, cantidad);
-
     cargarCarrito(carrito.id);
   };
 
@@ -77,8 +57,19 @@ export default function CarritoPage() {
     if (!carrito) return;
 
     await deleteProducto(carrito.id, idProducto);
-
     cargarCarrito(carrito.id);
+  };
+
+  // ----------------------------------------------
+  // Calcular total (backend NO lo envía)
+  // ----------------------------------------------
+  const calcularTotal = () => {
+    if (!carrito) return 0;
+
+    return carrito.detalles.reduce(
+      (acc, item) => acc + item.cantidad * 1, // precio NO está disponible en carrito
+      0
+    );
   };
 
   // ----------------------------------------------
@@ -141,7 +132,7 @@ export default function CarritoPage() {
 
           <div className="list-group-item fw-bold d-flex justify-content-between">
             Total:
-            <span>${carrito.total}</span>
+            <span>${calcularTotal()}</span>
           </div>
 
           <a href="/pago" className="btn btn-success mt-3">
