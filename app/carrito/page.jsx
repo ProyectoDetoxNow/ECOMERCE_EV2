@@ -94,11 +94,11 @@ export default function CarritoPage() {
     <div className="container my-5">
       <h1 className="mb-4 text-center">Mi Carrito 🛒</h1>
 
-      {!carrito || carrito.detalleCarrito.length === 0 ? (
+      {!carrito || carrito.detalles.length === 0 ? (
         <p className="text-center">Tu carrito está vacío.</p>
       ) : (
         <div className="list-group">
-          {carrito.detalleCarrito.map((item) => (
+          {carrito.detalles.map((item) => (
             <div
               key={item.id}
               className="list-group-item d-flex justify-content-between align-items-center"
