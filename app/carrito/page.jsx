@@ -13,9 +13,9 @@ export default function CarritoPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ----------------------------------------------
-  // Cargar carrito si existe en localStorage
-  // ----------------------------------------------
+  // ----------------------------------------------------
+  // Cargar carrito desde localStorage
+  // ----------------------------------------------------
   useEffect(() => {
     const idGuardado = Number(localStorage.getItem("idCarrito"));
 
@@ -26,9 +26,7 @@ export default function CarritoPage() {
     }
   }, []);
 
-  // ----------------------------------------------
-  // Función para cargar carrito
-  // ----------------------------------------------
+  // ----------------------------------------------------
   const cargarCarrito = async (idCarrito) => {
     try {
       const data = await getCarrito(idCarrito);
@@ -40,9 +38,7 @@ export default function CarritoPage() {
     }
   };
 
-  // ----------------------------------------------
-  // Actualizar cantidad
-  // ----------------------------------------------
+  // ----------------------------------------------------
   const actualizarCantidad = async (idProducto, cantidad) => {
     if (!carrito) return;
 
@@ -50,9 +46,7 @@ export default function CarritoPage() {
     cargarCarrito(carrito.id);
   };
 
-  // ----------------------------------------------
-  // Eliminar producto
-  // ----------------------------------------------
+  // ----------------------------------------------------
   const eliminarProducto = async (idProducto) => {
     if (!carrito) return;
 
@@ -60,27 +54,23 @@ export default function CarritoPage() {
     cargarCarrito(carrito.id);
   };
 
-  // ----------------------------------------------
-  // Calcular total (backend NO lo envía)
-  // ----------------------------------------------
+  // ----------------------------------------------------
+  // CALCULAR TOTAL CORRECTO USANDO EL PRODUCTO DEL BACKEND
+  // ----------------------------------------------------
   const calcularTotal = () => {
     if (!carrito) return 0;
 
-    return carrito.detalles.reduce(
-      (acc, item) => acc + item.cantidad * 1, // precio NO está disponible en carrito
-      0
-    );
+    return carrito.detalles.reduce((acc, item) => {
+      const precio = item.producto?.precio || 0;
+      return acc + precio * item.cantidad;
+    }, 0);
   };
 
-  // ----------------------------------------------
-  // LOADING & ERROR
-  // ----------------------------------------------
+  // ----------------------------------------------------
   if (loading) return <p>Cargando carrito...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  // ----------------------------------------------
-  // RENDER
-  // ----------------------------------------------
+  // ----------------------------------------------------
   return (
     <div className="container my-5">
       <h1 className="mb-4 text-center">Mi Carrito 🛒</h1>
@@ -94,10 +84,28 @@ export default function CarritoPage() {
               key={item.id}
               className="list-group-item d-flex justify-content-between align-items-center"
             >
-              <div>
-                <strong>Producto ID: {item.idProducto}</strong>
-                <br />
-                Cantidad: {item.cantidad}
+              <div className="d-flex align-items-center gap-3">
+                {/* Imagen */}
+                {item.producto?.imagen && (
+                  <img
+                    src={item.producto.imagen}
+                    alt={item.producto.nombreProducto}
+                    width="80"
+                    className="rounded"
+                  />
+                )}
+
+                <div>
+                  <strong>{item.producto?.nombreProducto}</strong>
+                  <br />
+                  <span className="text-muted">
+                    Precio unidad: ${item.producto?.precio}
+                  </span>
+                  <br />
+                  <span className="fw-bold">
+                    Subtotal: ${item.producto?.precio * item.cantidad}
+                  </span>
+                </div>
               </div>
 
               <div className="d-flex gap-2">
@@ -130,6 +138,7 @@ export default function CarritoPage() {
             </div>
           ))}
 
+          {/* TOTAL */}
           <div className="list-group-item fw-bold d-flex justify-content-between">
             Total:
             <span>${calcularTotal()}</span>
