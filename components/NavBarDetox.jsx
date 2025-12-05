@@ -100,10 +100,22 @@ export default function NavBarDetox() {
             <Link
               href="/carrito"
               className="btn btn-outline-success position-relative px-3"
+              style={{ fontSize: "1.4rem" }}
             >
               🛒
               {totalQuantity > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                <span
+                  className="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger text-white"
+                  style={{
+                    fontSize: "0.75rem",
+                    padding: "0.35rem 0.5rem",
+                    minWidth: "1.4rem",
+                    height: "1.4rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   {totalQuantity}
                 </span>
               )}

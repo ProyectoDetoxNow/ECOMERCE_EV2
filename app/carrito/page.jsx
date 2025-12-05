@@ -46,26 +46,21 @@ export default function CarritoPage() {
     if (!carrito || actionLoading) return;
     setActionLoading(true);
 
-    // Copia carrito actual
     const copiaCarrito = { ...carrito };
     const copiaDetalles = [...carrito.detalles];
 
-    // Busca el producto y actualiza cantidad en UI
     const index = copiaDetalles.findIndex((d) => d.idProducto === idProducto);
     copiaDetalles[index] = {
       ...copiaDetalles[index],
       cantidad: nuevaCantidad,
     };
 
-    // Se refleja de inmediato
     setCarrito({ ...copiaCarrito, detalles: copiaDetalles });
 
     try {
       await updateCantidad(carrito.id, idProducto, nuevaCantidad);
     } catch (err) {
       console.error("Error actualizando, revirtiendo", err);
-
-      // Revertir cambios si falla
       setCarrito(copiaCarrito);
     }
 
@@ -73,7 +68,7 @@ export default function CarritoPage() {
   };
 
   // ----------------------------------------------------
-  // OPTIMISTIC DELETE: eliminar instantáneamente
+  // OPTIMISTIC DELETE
   // ----------------------------------------------------
   const eliminarProducto = async (idProducto) => {
     if (!carrito || actionLoading) return;
@@ -84,21 +79,18 @@ export default function CarritoPage() {
       (d) => d.idProducto !== idProducto
     );
 
-    // UI refleja la eliminación
     setCarrito({ ...carrito, detalles: copiaDetalles });
 
     try {
       await deleteProducto(carrito.id, idProducto);
     } catch (err) {
       console.error("Error eliminando, revirtiendo", err);
-      setCarrito(copiaCarrito); // revertir
+      setCarrito(copiaCarrito);
     }
 
     setActionLoading(false);
   };
 
-  // ----------------------------------------------------
-  // CALCULAR TOTAL NUEVO
   // ----------------------------------------------------
   const calcularTotal = () => {
     if (!carrito) return 0;
@@ -150,7 +142,8 @@ export default function CarritoPage() {
                 </div>
               </div>
 
-              <div className="d-flex gap-2">
+              {/* 🔥 BLOQUE DE BOTONES CON CANTIDAD EN EL MEDIO */}
+              <div className="d-flex align-items-center gap-2">
                 {/* + */}
                 <button
                   disabled={actionLoading}
@@ -161,6 +154,9 @@ export default function CarritoPage() {
                 >
                   +
                 </button>
+
+                {/* Cantidad ACTUAL visible */}
+                <span className="px-2 fw-bold">{item.cantidad}</span>
 
                 {/* - */}
                 <button
