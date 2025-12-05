@@ -147,7 +147,7 @@ Neon DB (serverless)
 
 ⚙️ Instalación y Ejecución
 🖥️ Frontend (Next.js)
-git clone https://github.com/tuusuario/tu-repo.git
+git clone https://github.com/ProyectoDetoxNow/ECOMERCE_EV2
 cd frontend
 npm install
 npm run dev
@@ -157,7 +157,7 @@ npm run dev
 Clonar repositorio:
 
 git clone https://github.com/ProyectoDetoxNow/DetoxEV2.git
-cd DetoxEV2/carrito-service
+cd DetoxEV2/Api_...
 
 
 Configurar variables de entorno:
