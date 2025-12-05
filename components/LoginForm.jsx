@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Form, Button, Spinner } from "react-bootstrap";
-import useSesion from "@/hooks/useSesion"; // Hook personalizado
+import useSesion from "@/hooks/useSesion";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -20,15 +20,12 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     let newErrors = {};
 
-    if (!formData.correo) {
+    if (!formData.correo)
       newErrors.correo = "Debe ingresar su correo electrónico.";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Debe ingresar su contraseña.";
-    }
+    if (!formData.password) newErrors.password = "Debe ingresar su contraseña.";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
@@ -40,12 +37,18 @@ export default function LoginForm() {
         "https://apiusuario-production-81bf.up.railway.app/api/usuarios/login",
         {
           method: "POST",
+          mode: "cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         }
       );
 
-      const data = await response.json();
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (err) {
+        console.warn("⚠️ Respuesta no JSON del backend");
+      }
 
       if (!response.ok || !data.success) {
         setIsLoading(false);
@@ -53,12 +56,17 @@ export default function LoginForm() {
         return;
       }
 
-      // 🔥 Guardar sesión
+      // 🔥 SOLO GUARDAMOS EL CORREO COMO SESIÓN (tu backend no devuelve más datos)
       iniciarSesion(formData.correo);
+
+      // Notificar globalmente
+      window.dispatchEvent(new Event("storage"));
 
       router.push("/productos");
     } catch (error) {
       alert("⚠️ Error conectando al servidor.");
+    } finally {
+      setIsLoading(false);
     }
   };
 

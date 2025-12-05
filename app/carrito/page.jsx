@@ -122,10 +122,14 @@ export default function CarritoPage() {
               <div className="d-flex align-items-center gap-3">
                 {item.producto?.imagen && (
                   <img
-                    src={item.producto.imagen}
+                    src={`/imagenes/${encodeURIComponent(
+                      item.producto.imagen
+                    )}`}
                     alt={item.producto.nombreProducto}
                     width="80"
+                    height="80"
                     className="rounded"
+                    style={{ objectFit: "cover" }}
                   />
                 )}
 
