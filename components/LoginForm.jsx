@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Form, Button, Spinner } from "react-bootstrap";
-import useSesion from "@/hooks/useSesion"; // Hook personalizado
+import useSesion from "@/hooks/useSesion";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -20,6 +20,7 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     let newErrors = {};
 
     if (!formData.correo)
@@ -36,12 +37,18 @@ export default function LoginForm() {
         "https://apiusuario-production-81bf.up.railway.app/api/usuarios/login",
         {
           method: "POST",
+          mode: "cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         }
       );
 
-      const data = await response.json();
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (err) {
+        console.warn("⚠️ Respuesta no JSON del backend");
+      }
 
       if (!response.ok || !data.success) {
         setIsLoading(false);
@@ -49,24 +56,10 @@ export default function LoginForm() {
         return;
       }
 
-      const usuario = data.usuario; // 🔥 tu API devuelve esto
+      // 🔥 SOLO GUARDAMOS EL CORREO COMO SESIÓN (tu backend no devuelve más datos)
+      iniciarSesion(formData.correo);
 
-      // ----------------------------------------------------
-      // 🔥 GUARDAR SESIÓN MÍNIMA
-      // ----------------------------------------------------
-      iniciarSesion(usuario.email);
-
-      // ----------------------------------------------------
-      // 🔥 GUARDAR DATOS PARA AUTOCOMPLETAR EL PAGO
-      // ----------------------------------------------------
-      localStorage.setItem("idUsuario", usuario.id);
-      localStorage.setItem("nombreUsuario", usuario.nombre);
-      localStorage.setItem("direccionUsuario", usuario.direccion);
-      localStorage.setItem("telefonoUsuario", usuario.telefono || "");
-      localStorage.setItem("regionUsuario", usuario.region || "");
-      localStorage.setItem("comunaUsuario", usuario.comuna || "");
-
-      // Notificar cambios globales
+      // Notificar globalmente
       window.dispatchEvent(new Event("storage"));
 
       router.push("/productos");
