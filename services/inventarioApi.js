@@ -2,7 +2,7 @@
 
 export async function obtenerInventario() {
   const res = await fetch(
-    "https://apiproducto.up.railway.app/Api/v1/inventario",
+    "https://apiproducto-production.up.railway.app/Api/v1/inventario",
     { cache: "no-store" }
   );
 
@@ -16,7 +16,7 @@ export async function obtenerInventario() {
 
 export async function obtenerProductoPorId(id) {
   const res = await fetch(
-    `https://apiproducto.up.railway.app/Api/v1/inventario/${id}`,
+    `https://apiproducto-production.up.railway.app/Api/v1/inventario/${id}`,
     { cache: "no-store" }
   );
 
