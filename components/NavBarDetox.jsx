@@ -1,30 +1,67 @@
 "use client";
-import { useCart } from "@/components/CartContext";
-import useSesion from "@/hooks/useSesion"; //
+import { useState, useEffect } from "react";
+import useSesion from "@/hooks/useSesion";
 import Link from "next/link";
 import { Navbar, Nav, Container } from "react-bootstrap";
+import { getCarrito } from "@/services/apiCarrito";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function NavBarDetox() {
-  const { totalQuantity } = useCart();
-  const { usuario, cerrarSesion } = useSesion(); //
+  const [totalCantidad, setTotalCantidad] = useState(0);
+  const { usuario, cerrarSesion } = useSesion();
+
+  // 🔥 Cargar cantidad real desde el backend
+  const actualizarCantidadCarrito = async () => {
+    try {
+      const id = localStorage.getItem("idCarrito");
+
+      if (!id) {
+        setTotalCantidad(0);
+        return;
+      }
+
+      const carrito = await getCarrito(id);
+
+      const cantidad = carrito.detalles?.reduce(
+        (acc, item) => acc + item.cantidad,
+        0
+      );
+
+      setTotalCantidad(cantidad);
+    } catch (error) {
+      console.error("Error obteniendo carrito:", error);
+    }
+  };
+
+  // Cargar al entrar a la página
+  useEffect(() => {
+    actualizarCantidadCarrito();
+  }, []);
+
+  // 🔥 Escuchar cambios de carrito enviados desde el botón
+  useEffect(() => {
+    window.addEventListener("carritoActualizado", actualizarCantidadCarrito);
+
+    return () =>
+      window.removeEventListener(
+        "carritoActualizado",
+        actualizarCantidadCarrito
+      );
+  }, []);
 
   return (
     <Navbar expand="lg" className="shadow-sm bg-light py-3">
       <Container>
-        {/* 🔹 Logo */}
         <Link href="/" className="navbar-brand fw-bold text-success fs-4">
           DetoxNow
         </Link>
 
         <Navbar.Toggle aria-controls="menu-principal" />
         <Navbar.Collapse id="menu-principal">
-          {/* 🔹 Enlaces del menú */}
           <Nav className="me-auto">
             <Nav.Link as={Link} href="/" className="text-success fw-semibold">
               Home
             </Nav.Link>
-
             <Nav.Link
               as={Link}
               href="/productos"
@@ -32,7 +69,6 @@ export default function NavBarDetox() {
             >
               Productos
             </Nav.Link>
-
             <Nav.Link
               as={Link}
               href="/categorias"
@@ -40,7 +76,6 @@ export default function NavBarDetox() {
             >
               Categorías
             </Nav.Link>
-
             <Nav.Link
               as={Link}
               href="/nosotros"
@@ -48,7 +83,6 @@ export default function NavBarDetox() {
             >
               Nosotros
             </Nav.Link>
-
             <Nav.Link
               as={Link}
               href="/blog"
@@ -56,7 +90,6 @@ export default function NavBarDetox() {
             >
               Blog
             </Nav.Link>
-
             <Nav.Link
               as={Link}
               href="/contacto"
@@ -66,7 +99,6 @@ export default function NavBarDetox() {
             </Nav.Link>
           </Nav>
 
-          {/* 🔹 Sección derecha */}
           <div className="d-flex align-items-center gap-3">
             {usuario ? (
               <>
@@ -96,14 +128,14 @@ export default function NavBarDetox() {
               </>
             )}
 
-            {/* 🔹 Carrito */}
+            {/* 🔥 Ícono del carrito con cantidad REAL */}
             <Link
               href="/carrito"
               className="btn btn-outline-success position-relative px-3"
               style={{ fontSize: "1.4rem" }}
             >
               🛒
-              {totalQuantity > 0 && (
+              {totalCantidad > 0 && (
                 <span
                   className="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger text-white"
                   style={{
@@ -116,7 +148,7 @@ export default function NavBarDetox() {
                     justifyContent: "center",
                   }}
                 >
-                  {totalQuantity}
+                  {totalCantidad}
                 </span>
               )}
             </Link>
