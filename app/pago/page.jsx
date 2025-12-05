@@ -10,6 +10,7 @@ export default function PagoPage() {
 
   const [nombre, setNombre] = useState("");
   const [apellidos, setApellidos] = useState("");
+  const [direccion, setDireccion] = useState("");
   const [correo, setCorreo] = useState("");
   const [metodoPago, setMetodoPago] = useState("");
 
@@ -20,22 +21,23 @@ export default function PagoPage() {
   const [mensajeExito, setMensajeExito] = useState("");
 
   // ----------------------------------------------------
-  // 1) Verificar sesión + precargar datos de usuario + cargar carrito
+  // Cargar datos del usuario + carrito real desde backend
   // ----------------------------------------------------
   useEffect(() => {
     const usuarioActivo = localStorage.getItem("usuarioActivo");
 
-    // 3) Si no hay sesión -> ir a login
     if (!usuarioActivo) {
       router.push("/login");
       return;
     }
 
-    // 2) Autocompletar datos de usuario (al menos correo)
+    // Autocompletar correo
     setCorreo(usuarioActivo);
 
-    // Si quieres, puedes guardar nombre/apellidos en localStorage
-    // y precargarlos aquí también.
+    // Autocompletar desde localStorage
+    setNombre(localStorage.getItem("nombreUsuario") || "");
+    setDireccion(localStorage.getItem("direccionUsuario") || "");
+    setApellidos("");
 
     const idCarrito = localStorage.getItem("idCarrito");
 
@@ -45,7 +47,6 @@ export default function PagoPage() {
       return;
     }
 
-    // 1) Cargar resumen real del carrito desde el backend
     const cargar = async () => {
       try {
         const data = await getCarrito(idCarrito);
@@ -62,47 +63,40 @@ export default function PagoPage() {
   }, [router]);
 
   // ----------------------------------------------------
-  // Calcular total desde el carrito real
+  // Calcular total real
   // ----------------------------------------------------
-  const calcularTotal = () => {
-    if (!carrito || !carrito.detalles) return 0;
-    return carrito.detalles.reduce((acc, item) => {
-      const precio = item.producto?.precio || 0;
-      return acc + precio * item.cantidad;
-    }, 0);
-  };
+  const calcularTotal = () =>
+    carrito?.detalles?.reduce(
+      (acc, item) => acc + (item.producto?.precio || 0) * item.cantidad,
+      0
+    ) || 0;
+
+  const total = calcularTotal();
 
   // ----------------------------------------------------
-  // 4) Enviar pago al ms-pago
+  // Registrar pago en ms-pago
   // ----------------------------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (pagando) return;
+
     setPagando(true);
     setMensajeExito("");
 
     const idCarrito = localStorage.getItem("idCarrito");
-    if (!idCarrito) {
-      alert("No existe un carrito para pagar.");
-      setPagando(false);
-      return;
-    }
-
-    // Por ahora usamos un idUsuario fijo o guardado (puedes mejorarlo luego)
     const idUsuario = Number(localStorage.getItem("idUsuario") || 1);
 
     try {
-      // 1️⃣ CREAR PEDIDO
+      // Crear pedido
       const resPedido = await fetch(
         `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/crear/${idCarrito}/${idUsuario}`,
         { method: "POST" }
       );
 
       if (!resPedido.ok) throw new Error("No se pudo crear el pedido");
-
       const pedido = await resPedido.json();
 
-      // 2️⃣ PAGAR PEDIDO
+      // Pagar pedido
       const resPago = await fetch(
         `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/pagar/${pedido.id}?metodoPago=${metodoPago}`,
         { method: "POST" }
@@ -110,15 +104,11 @@ export default function PagoPage() {
 
       if (!resPago.ok) throw new Error("Error procesando el pago");
 
-      // 5) Mensaje de éxito + limpiar carrito
       setMensajeExito(
-        `Gracias por tu compra, ${nombre || ""} ${
-          apellidos || ""
-        }. Tu pago fue procesado correctamente.`
+        `Gracias por tu compra, ${nombre}. Tu pago fue procesado correctamente.`
       );
 
       localStorage.removeItem("idCarrito");
-      // avisar al navbar que el carrito está vacío
       window.dispatchEvent(new Event("carritoActualizado"));
     } catch (err) {
       console.error(err);
@@ -131,11 +121,8 @@ export default function PagoPage() {
   // ----------------------------------------------------
   // UI
   // ----------------------------------------------------
-  const total = calcularTotal();
-
   return (
     <>
-      {/* Banner */}
       <div
         className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
         style={{
@@ -158,6 +145,7 @@ export default function PagoPage() {
               className="shadow p-4 rounded bg-light"
               onSubmit={handleSubmit}
             >
+              {/* Nombre + Apellidos */}
               <div className="row mb-3">
                 <div className="col">
                   <label className="form-label">Nombre</label>
@@ -177,11 +165,23 @@ export default function PagoPage() {
                     className="form-control"
                     value={apellidos}
                     onChange={(e) => setApellidos(e.target.value)}
-                    required
                   />
                 </div>
               </div>
 
+              {/* Dirección */}
+              <div className="mb-3">
+                <label className="form-label">Dirección de envío</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={direccion}
+                  onChange={(e) => setDireccion(e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Correo */}
               <div className="mb-3">
                 <label className="form-label">Correo</label>
                 <input
@@ -193,6 +193,7 @@ export default function PagoPage() {
                 />
               </div>
 
+              {/* Método de pago */}
               <div className="mb-3">
                 <label className="form-label">Método de Pago</label>
                 <select
@@ -211,7 +212,7 @@ export default function PagoPage() {
               <button
                 type="submit"
                 className="btn btn-success w-100"
-                disabled={pagando || cargandoCarrito || !!errorCarrito}
+                disabled={pagando || cargandoCarrito || errorCarrito}
               >
                 {pagando ? "Procesando pago..." : "Pagar"}
               </button>
@@ -224,7 +225,7 @@ export default function PagoPage() {
             </form>
           </div>
 
-          {/* RESUMEN REAL DE LA COMPRA */}
+          {/* RESUMEN */}
           <div className="col-md-6">
             <h2 className="text-center mb-4">Resumen de tu compra</h2>
 
@@ -238,40 +239,31 @@ export default function PagoPage() {
               </div>
             )}
 
-            {!cargandoCarrito && !errorCarrito && carrito && (
+            {!cargandoCarrito && carrito && carrito.detalles && (
               <div className="card shadow">
                 <div className="card-body">
-                  {carrito.detalles && carrito.detalles.length > 0 ? (
-                    <>
-                      {carrito.detalles.map((item) => (
-                        <div
-                          key={item.idProducto}
-                          className="d-flex justify-content-between mb-2"
-                        >
-                          <div>
-                            <strong>{item.producto?.nombreProducto}</strong>
-                            <div className="text-muted">
-                              {item.cantidad} x ${item.producto?.precio}
-                            </div>
-                          </div>
-                          <span className="fw-bold">
-                            ${item.cantidad * (item.producto?.precio || 0)}
-                          </span>
+                  {carrito.detalles.map((item) => (
+                    <div
+                      key={item.idProducto}
+                      className="d-flex justify-content-between mb-2"
+                    >
+                      <div>
+                        <strong>{item.producto?.nombreProducto}</strong>
+                        <div className="text-muted">
+                          {item.cantidad} x ${item.producto?.precio}
                         </div>
-                      ))}
-
-                      <hr />
-                      <div className="d-flex justify-content-between fw-bold">
-                        <span>Total:</span>
-                        <span>${total}</span>
                       </div>
-                    </>
-                  ) : (
-                    <p className="text-center mb-0">
-                      Tu carrito está vacío.{" "}
-                      <Link href="/productos">Ver productos</Link>
-                    </p>
-                  )}
+                      <span className="fw-bold">
+                        ${item.cantidad * (item.producto?.precio || 0)}
+                      </span>
+                    </div>
+                  ))}
+
+                  <hr />
+                  <div className="d-flex justify-content-between fw-bold">
+                    <span>Total:</span>
+                    <span>${total}</span>
+                  </div>
                 </div>
               </div>
             )}

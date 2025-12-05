@@ -22,13 +22,9 @@ export default function LoginForm() {
     e.preventDefault();
     let newErrors = {};
 
-    if (!formData.correo) {
+    if (!formData.correo)
       newErrors.correo = "Debe ingresar su correo electrónico.";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Debe ingresar su contraseña.";
-    }
+    if (!formData.password) newErrors.password = "Debe ingresar su contraseña.";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
@@ -53,12 +49,31 @@ export default function LoginForm() {
         return;
       }
 
-      // 🔥 Guardar sesión
-      iniciarSesion(formData.correo);
+      const usuario = data.usuario; // 🔥 tu API devuelve esto
+
+      // ----------------------------------------------------
+      // 🔥 GUARDAR SESIÓN MÍNIMA
+      // ----------------------------------------------------
+      iniciarSesion(usuario.email);
+
+      // ----------------------------------------------------
+      // 🔥 GUARDAR DATOS PARA AUTOCOMPLETAR EL PAGO
+      // ----------------------------------------------------
+      localStorage.setItem("idUsuario", usuario.id);
+      localStorage.setItem("nombreUsuario", usuario.nombre);
+      localStorage.setItem("direccionUsuario", usuario.direccion);
+      localStorage.setItem("telefonoUsuario", usuario.telefono || "");
+      localStorage.setItem("regionUsuario", usuario.region || "");
+      localStorage.setItem("comunaUsuario", usuario.comuna || "");
+
+      // Notificar cambios globales
+      window.dispatchEvent(new Event("storage"));
 
       router.push("/productos");
     } catch (error) {
       alert("⚠️ Error conectando al servidor.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
