@@ -19,6 +19,9 @@ export default function PagoPage() {
   const [pagando, setPagando] = useState(false);
   const [mensajeExito, setMensajeExito] = useState("");
 
+  // --------------------------------------------------------
+  // 1️⃣ Verificar sesión + Autocompletar datos + cargar carrito
+  // --------------------------------------------------------
   useEffect(() => {
     const usuarioActivo = localStorage.getItem("usuarioActivo");
 
@@ -27,7 +30,7 @@ export default function PagoPage() {
       return;
     }
 
-    // Autocompletar datos del usuario
+    // Autocompletar desde localStorage
     setCorreo(usuarioActivo);
     setNombre(localStorage.getItem("nombreUsuario") || "");
     setDireccion(localStorage.getItem("direccionUsuario") || "");
@@ -55,6 +58,9 @@ export default function PagoPage() {
     cargar();
   }, [router]);
 
+  // --------------------------------------------------------
+  // Calcular total del carrito
+  // --------------------------------------------------------
   const calcularTotal = () => {
     if (!carrito || !carrito.detalles) return 0;
     return carrito.detalles.reduce((acc, item) => {
@@ -63,6 +69,9 @@ export default function PagoPage() {
     }, 0);
   };
 
+  // --------------------------------------------------------
+  // 2️⃣ Procesar el pago
+  // --------------------------------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (pagando) return;
@@ -74,6 +83,7 @@ export default function PagoPage() {
     const idUsuario = Number(localStorage.getItem("idUsuario") || 1);
 
     try {
+      // Crear pedido
       const resPedido = await fetch(
         `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/crear/${idCarrito}/${idUsuario}`,
         { method: "POST" }
@@ -83,6 +93,7 @@ export default function PagoPage() {
 
       const pedido = await resPedido.json();
 
+      // Registrar pago
       const resPago = await fetch(
         `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/pagar/${pedido.id}?metodoPago=${metodoPago}`,
         { method: "POST" }
@@ -90,9 +101,8 @@ export default function PagoPage() {
 
       if (!resPago.ok) throw new Error("Error procesando pago");
 
-      setMensajeExito(
-        `Gracias por tu compra, ${nombre}. Tu pago fue procesado correctamente.`
-      );
+      // Éxito
+      setMensajeExito(`Gracias por tu compra, ${nombre}. ¡Pago exitoso!`);
 
       localStorage.removeItem("idCarrito");
       window.dispatchEvent(new Event("carritoActualizado"));
@@ -108,6 +118,7 @@ export default function PagoPage() {
 
   return (
     <>
+      {/* Banner */}
       <div
         className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
         style={{
@@ -122,7 +133,9 @@ export default function PagoPage() {
 
       <div className="container my-5">
         <div className="row">
-          {/* FORMULARIO */}
+          {/* ------------------------------------------------------
+              FORMULARIO DE PAGO
+          ------------------------------------------------------ */}
           <div className="col-md-6 mb-4">
             <h2 className="text-center mb-4">Formulario de Pago</h2>
 
@@ -153,7 +166,7 @@ export default function PagoPage() {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Correo</label>
+                <label className="form-label">Correo electrónico</label>
                 <input
                   type="email"
                   className="form-control"
@@ -192,10 +205,67 @@ export default function PagoPage() {
             </form>
           </div>
 
-          {/* RESUMEN */}
+          {/* ------------------------------------------------------
+              RESUMEN DE LA COMPRA
+          ------------------------------------------------------ */}
           <div className="col-md-6">
             <h2 className="text-center mb-4">Resumen de tu compra</h2>
-            {/* ... resto igual ... */}
+
+            {cargandoCarrito && (
+              <p className="text-center">Cargando carrito...</p>
+            )}
+
+            {errorCarrito && (
+              <div className="alert alert-danger text-center">
+                {errorCarrito}
+              </div>
+            )}
+
+            {!cargandoCarrito && carrito && carrito.detalles && (
+              <div className="card shadow">
+                <div className="card-body">
+                  {carrito.detalles.length > 0 ? (
+                    <>
+                      {carrito.detalles.map((item) => (
+                        <div
+                          key={item.idProducto}
+                          className="d-flex justify-content-between mb-2"
+                        >
+                          <div>
+                            <strong>{item.producto?.nombreProducto}</strong>
+                            <div className="text-muted">
+                              {item.cantidad} x ${item.producto?.precio}
+                            </div>
+                          </div>
+                          <span className="fw-bold">
+                            ${item.cantidad * (item.producto?.precio || 0)}
+                          </span>
+                        </div>
+                      ))}
+
+                      <hr />
+
+                      <div className="d-flex justify-content-between fw-bold">
+                        <span>Total:</span>
+                        <span>${total}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-center">
+                      Tu carrito está vacío.{" "}
+                      <Link href="/productos">Ver productos</Link>
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <Link
+              href="/carrito"
+              className="btn btn-outline-primary w-100 mt-3"
+            >
+              Ver Carrito
+            </Link>
           </div>
         </div>
       </div>
