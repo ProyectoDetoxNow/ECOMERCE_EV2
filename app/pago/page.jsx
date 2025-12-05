@@ -1,31 +1,98 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getCarrito } from "@/services/apiCarrito";
 
 export default function PagoPage() {
+  const router = useRouter();
+
   const [nombre, setNombre] = useState("");
   const [apellidos, setApellidos] = useState("");
   const [correo, setCorreo] = useState("");
   const [metodoPago, setMetodoPago] = useState("");
 
-  // ⚠️ Ya no usamos cartContext: el backend calcula el total desde el carrito real.
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [carrito, setCarrito] = useState(null);
+  const [cargandoCarrito, setCargandoCarrito] = useState(true);
+  const [errorCarrito, setErrorCarrito] = useState("");
+  const [pagando, setPagando] = useState(false);
+  const [mensajeExito, setMensajeExito] = useState("");
 
-    const idCarrito = localStorage.getItem("idCarrito");
-    const usuarioActivo = localStorage.getItem("usuarioActivo") ?? 1;
-    const idUsuario = Number(usuarioActivo);
+  // ----------------------------------------------------
+  // 1) Verificar sesión + precargar datos de usuario + cargar carrito
+  // ----------------------------------------------------
+  useEffect(() => {
+    const usuarioActivo = localStorage.getItem("usuarioActivo");
 
-    if (!idCarrito) {
-      alert("No existe un carrito para pagar.");
+    // 3) Si no hay sesión -> ir a login
+    if (!usuarioActivo) {
+      router.push("/login");
       return;
     }
 
+    // 2) Autocompletar datos de usuario (al menos correo)
+    setCorreo(usuarioActivo);
+
+    // Si quieres, puedes guardar nombre/apellidos en localStorage
+    // y precargarlos aquí también.
+
+    const idCarrito = localStorage.getItem("idCarrito");
+
+    if (!idCarrito) {
+      setErrorCarrito("No hay carrito para pagar.");
+      setCargandoCarrito(false);
+      return;
+    }
+
+    // 1) Cargar resumen real del carrito desde el backend
+    const cargar = async () => {
+      try {
+        const data = await getCarrito(idCarrito);
+        setCarrito(data);
+      } catch (err) {
+        console.error(err);
+        setErrorCarrito("No se pudo cargar el carrito.");
+      } finally {
+        setCargandoCarrito(false);
+      }
+    };
+
+    cargar();
+  }, [router]);
+
+  // ----------------------------------------------------
+  // Calcular total desde el carrito real
+  // ----------------------------------------------------
+  const calcularTotal = () => {
+    if (!carrito || !carrito.detalles) return 0;
+    return carrito.detalles.reduce((acc, item) => {
+      const precio = item.producto?.precio || 0;
+      return acc + precio * item.cantidad;
+    }, 0);
+  };
+
+  // ----------------------------------------------------
+  // 4) Enviar pago al ms-pago
+  // ----------------------------------------------------
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (pagando) return;
+    setPagando(true);
+    setMensajeExito("");
+
+    const idCarrito = localStorage.getItem("idCarrito");
+    if (!idCarrito) {
+      alert("No existe un carrito para pagar.");
+      setPagando(false);
+      return;
+    }
+
+    // Por ahora usamos un idUsuario fijo o guardado (puedes mejorarlo luego)
+    const idUsuario = Number(localStorage.getItem("idUsuario") || 1);
+
     try {
-      // ---------------------------------------------
       // 1️⃣ CREAR PEDIDO
-      // ---------------------------------------------
       const resPedido = await fetch(
         `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/crear/${idCarrito}/${idUsuario}`,
         { method: "POST" }
@@ -35,9 +102,7 @@ export default function PagoPage() {
 
       const pedido = await resPedido.json();
 
-      // ---------------------------------------------
       // 2️⃣ PAGAR PEDIDO
-      // ---------------------------------------------
       const resPago = await fetch(
         `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/pagar/${pedido.id}?metodoPago=${metodoPago}`,
         { method: "POST" }
@@ -45,17 +110,28 @@ export default function PagoPage() {
 
       if (!resPago.ok) throw new Error("Error procesando el pago");
 
-      alert(
-        `Gracias por tu compra, ${nombre} ${apellidos}!\nTu pago fue procesado correctamente.`
+      // 5) Mensaje de éxito + limpiar carrito
+      setMensajeExito(
+        `Gracias por tu compra, ${nombre || ""} ${
+          apellidos || ""
+        }. Tu pago fue procesado correctamente.`
       );
 
-      // Limpia carrito al finalizar pago
       localStorage.removeItem("idCarrito");
+      // avisar al navbar que el carrito está vacío
+      window.dispatchEvent(new Event("carritoActualizado"));
     } catch (err) {
-      alert("Hubo un error procesando tu pago.");
       console.error(err);
+      alert("Hubo un error procesando tu pago.");
+    } finally {
+      setPagando(false);
     }
   };
+
+  // ----------------------------------------------------
+  // UI
+  // ----------------------------------------------------
+  const total = calcularTotal();
 
   return (
     <>
@@ -132,19 +208,73 @@ export default function PagoPage() {
                 </select>
               </div>
 
-              <button type="submit" className="btn btn-success w-100">
-                Pagar
+              <button
+                type="submit"
+                className="btn btn-success w-100"
+                disabled={pagando || cargandoCarrito || !!errorCarrito}
+              >
+                {pagando ? "Procesando pago..." : "Pagar"}
               </button>
+
+              {mensajeExito && (
+                <div className="alert alert-success mt-3" role="alert">
+                  {mensajeExito}
+                </div>
+              )}
             </form>
           </div>
 
-          {/* RESUMEN SIMPLE */}
+          {/* RESUMEN REAL DE LA COMPRA */}
           <div className="col-md-6">
             <h2 className="text-center mb-4">Resumen de tu compra</h2>
 
-            <p className="text-center text-muted">
-              El total se calculará automáticamente según tu carrito real.
-            </p>
+            {cargandoCarrito && (
+              <p className="text-center">Cargando carrito...</p>
+            )}
+
+            {errorCarrito && (
+              <div className="alert alert-danger text-center" role="alert">
+                {errorCarrito}
+              </div>
+            )}
+
+            {!cargandoCarrito && !errorCarrito && carrito && (
+              <div className="card shadow">
+                <div className="card-body">
+                  {carrito.detalles && carrito.detalles.length > 0 ? (
+                    <>
+                      {carrito.detalles.map((item) => (
+                        <div
+                          key={item.idProducto}
+                          className="d-flex justify-content-between mb-2"
+                        >
+                          <div>
+                            <strong>{item.producto?.nombreProducto}</strong>
+                            <div className="text-muted">
+                              {item.cantidad} x ${item.producto?.precio}
+                            </div>
+                          </div>
+                          <span className="fw-bold">
+                            ${item.cantidad * (item.producto?.precio || 0)}
+                          </span>
+                        </div>
+                      ))}
+
+                      <hr />
+                      <div className="d-flex justify-content-between fw-bold">
+                        <span>Total:</span>
+                        <span>${total}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-center mb-0">
+                      Tu carrito está vacío.{" "}
+                      <Link href="/productos">Ver productos</Link>
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             <Link
               href="/carrito"
