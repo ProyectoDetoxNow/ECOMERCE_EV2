@@ -33,7 +33,13 @@ export const updateCantidad = async (idCarrito, idProducto, cantidad) => {
   });
 
   if (!res.ok) throw new Error("Error actualizando cantidad");
-  return res.json();
+
+  // ✔ Manejo por si el backend no devuelve JSON válido
+  try {
+    return await res.json();
+  } catch {
+    return null;
+  }
 };
 
 // Eliminar producto
@@ -43,5 +49,7 @@ export const deleteProducto = async (idCarrito, idProducto) => {
   });
 
   if (!res.ok) throw new Error("Error eliminando producto");
-  return res.json();
+
+  // ✔ Tu backend devuelve un STRING, no un JSON
+  return res.text();
 };

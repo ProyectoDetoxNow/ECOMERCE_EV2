@@ -12,6 +12,7 @@ export default function CarritoPage() {
   const [carrito, setCarrito] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [actionLoading, setActionLoading] = useState(false); // evita spam de clicks
 
   // ----------------------------------------------------
   // Cargar carrito desde localStorage
@@ -39,23 +40,65 @@ export default function CarritoPage() {
   };
 
   // ----------------------------------------------------
-  const actualizarCantidad = async (idProducto, cantidad) => {
-    if (!carrito) return;
+  // OPTIMISTIC UPDATE: actualizar al instante y luego el backend
+  // ----------------------------------------------------
+  const actualizarCantidad = async (idProducto, nuevaCantidad) => {
+    if (!carrito || actionLoading) return;
+    setActionLoading(true);
 
-    await updateCantidad(carrito.id, idProducto, cantidad);
-    cargarCarrito(carrito.id);
+    // Copia carrito actual
+    const copiaCarrito = { ...carrito };
+    const copiaDetalles = [...carrito.detalles];
+
+    // Busca el producto y actualiza cantidad en UI
+    const index = copiaDetalles.findIndex((d) => d.idProducto === idProducto);
+    copiaDetalles[index] = {
+      ...copiaDetalles[index],
+      cantidad: nuevaCantidad,
+    };
+
+    // Se refleja de inmediato
+    setCarrito({ ...copiaCarrito, detalles: copiaDetalles });
+
+    try {
+      await updateCantidad(carrito.id, idProducto, nuevaCantidad);
+    } catch (err) {
+      console.error("Error actualizando, revirtiendo", err);
+
+      // Revertir cambios si falla
+      setCarrito(copiaCarrito);
+    }
+
+    setActionLoading(false);
   };
 
+  // ----------------------------------------------------
+  // OPTIMISTIC DELETE: eliminar instantáneamente
   // ----------------------------------------------------
   const eliminarProducto = async (idProducto) => {
-    if (!carrito) return;
+    if (!carrito || actionLoading) return;
+    setActionLoading(true);
 
-    await deleteProducto(carrito.id, idProducto);
-    cargarCarrito(carrito.id);
+    const copiaCarrito = { ...carrito };
+    const copiaDetalles = carrito.detalles.filter(
+      (d) => d.idProducto !== idProducto
+    );
+
+    // UI refleja la eliminación
+    setCarrito({ ...carrito, detalles: copiaDetalles });
+
+    try {
+      await deleteProducto(carrito.id, idProducto);
+    } catch (err) {
+      console.error("Error eliminando, revirtiendo", err);
+      setCarrito(copiaCarrito); // revertir
+    }
+
+    setActionLoading(false);
   };
 
   // ----------------------------------------------------
-  // CALCULAR TOTAL CORRECTO USANDO EL PRODUCTO DEL BACKEND
+  // CALCULAR TOTAL NUEVO
   // ----------------------------------------------------
   const calcularTotal = () => {
     if (!carrito) return 0;
@@ -81,11 +124,10 @@ export default function CarritoPage() {
         <div className="list-group">
           {carrito.detalles.map((item) => (
             <div
-              key={item.id}
+              key={item.idProducto}
               className="list-group-item d-flex justify-content-between align-items-center"
             >
               <div className="d-flex align-items-center gap-3">
-                {/* Imagen */}
                 {item.producto?.imagen && (
                   <img
                     src={item.producto.imagen}
@@ -109,7 +151,9 @@ export default function CarritoPage() {
               </div>
 
               <div className="d-flex gap-2">
+                {/* + */}
                 <button
+                  disabled={actionLoading}
                   className="btn btn-secondary"
                   onClick={() =>
                     actualizarCantidad(item.idProducto, item.cantidad + 1)
@@ -118,7 +162,9 @@ export default function CarritoPage() {
                   +
                 </button>
 
+                {/* - */}
                 <button
+                  disabled={actionLoading}
                   className="btn btn-secondary"
                   onClick={() =>
                     item.cantidad > 1 &&
@@ -128,7 +174,9 @@ export default function CarritoPage() {
                   -
                 </button>
 
+                {/* Eliminar */}
                 <button
+                  disabled={actionLoading}
                   className="btn btn-danger"
                   onClick={() => eliminarProducto(item.idProducto)}
                 >
