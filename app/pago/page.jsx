@@ -6,8 +6,8 @@ import { getCarrito } from "@/services/apiCarrito";
 import { calcularEnvio } from "@/services/apiEnvio";
 import { crearPedido, pagarPedido } from "@/services/apiPago";
 
-import PagoForm from "./components/PagoForm";
-import ResumenCompra from "./components/ResumenCompra";
+import PagoForm from "../../components/PagoForm";
+import ResumenCompra from "../../components/ResumenCompra";
 
 export default function PagoPage() {
   const router = useRouter();
