@@ -1,17 +1,33 @@
-"use server";
+// services/apiPago.js
 
-const API_PAGO =
-  "http://https://apipago-production-73a5.up.railway.app/Api/v1/pago/pago";
-// Cambia por tu URL real cuando lo subas
+const API_PAGO = "https://apipago-production-73a5.up.railway.app/Api/v1/pago";
 
-// Registrar un pago
-export async function registrarPago(data) {
-  const res = await fetch(`${API_PAGO}/registrar`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+/**
+ * Crear un pedido a partir del carrito
+ */
+export async function crearPedido(idCarrito, idUsuario) {
+  const res = await fetch(
+    `${API_PAGO}/pedido/crear/${idCarrito}/${idUsuario}`,
+    { method: "POST" }
+  );
 
-  if (!res.ok) throw new Error("Error al registrar pago");
+  if (!res.ok) {
+    throw new Error("Error al crear el pedido");
+  }
+
   return res.json();
+}
+
+/**
+ * Pagar un pedido existente
+ */
+export async function pagarPedido(pedidoId, metodoPago) {
+  const res = await fetch(
+    `${API_PAGO}/pedido/pagar/${pedidoId}?metodoPago=${metodoPago}`,
+    { method: "POST" }
+  );
+
+  if (!res.ok) {
+    throw new Error("Error procesando el pago");
+  }
 }
