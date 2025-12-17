@@ -1,6 +1,6 @@
 export async function calcularEnvio(datosEnvio) {
   const res = await fetch(
-    "http://apipago-production-73a5.up.railway.app/api/pago/calcular-envio",
+    "https://apipago-production-73a5.up.railway.app/api/pago/calcular-envio",
     {
       method: "POST",
       headers: {
