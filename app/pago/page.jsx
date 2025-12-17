@@ -4,15 +4,31 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getCarrito } from "@/services/apiCarrito";
+import { calcularEnvio } from "@/services/apiEnvio";
 
 export default function PagoPage() {
   const router = useRouter();
 
+  // -------------------------------
+  // Datos usuario / formulario
+  // -------------------------------
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [direccion, setDireccion] = useState("");
+  const [comuna, setComuna] = useState("");
+  const [region, setRegion] = useState("");
   const [metodoPago, setMetodoPago] = useState("");
 
+  // -------------------------------
+  // Estados de envío
+  // -------------------------------
+  const [envio, setEnvio] = useState(null);
+  const [calculandoEnvio, setCalculandoEnvio] = useState(false);
+  const [errorEnvio, setErrorEnvio] = useState("");
+
+  // -------------------------------
+  // Estados carrito / pago
+  // -------------------------------
   const [carrito, setCarrito] = useState(null);
   const [cargandoCarrito, setCargandoCarrito] = useState(true);
   const [errorCarrito, setErrorCarrito] = useState("");
@@ -20,7 +36,7 @@ export default function PagoPage() {
   const [mensajeExito, setMensajeExito] = useState("");
 
   // --------------------------------------------------------
-  // 1️⃣ Verificar sesión + Autocompletar datos + cargar carrito
+  // 1️⃣ Verificar sesión + autocompletar + cargar carrito
   // --------------------------------------------------------
   useEffect(() => {
     const usuarioActivo = localStorage.getItem("usuarioActivo");
@@ -30,7 +46,6 @@ export default function PagoPage() {
       return;
     }
 
-    // Autocompletar desde localStorage
     setCorreo(usuarioActivo);
     setNombre(localStorage.getItem("nombreUsuario") || "");
     setDireccion(localStorage.getItem("direccionUsuario") || "");
@@ -59,9 +74,9 @@ export default function PagoPage() {
   }, [router]);
 
   // --------------------------------------------------------
-  // Calcular total del carrito
+  // Calcular total productos
   // --------------------------------------------------------
-  const calcularTotal = () => {
+  const calcularTotalProductos = () => {
     if (!carrito || !carrito.detalles) return 0;
     return carrito.detalles.reduce((acc, item) => {
       const precio = item.producto?.precio || 0;
@@ -69,12 +84,38 @@ export default function PagoPage() {
     }, 0);
   };
 
+  const totalProductos = calcularTotalProductos();
+  const totalFinal = envio ? totalProductos + envio.costoEnvio : totalProductos;
+
   // --------------------------------------------------------
-  // 2️⃣ Procesar el pago
+  // 2️⃣ Calcular envío
+  // --------------------------------------------------------
+  const handleCalcularEnvio = async () => {
+    setCalculandoEnvio(true);
+    setErrorEnvio("");
+
+    try {
+      const data = await calcularEnvio({
+        direccion,
+        comuna,
+        region,
+      });
+
+      setEnvio(data);
+    } catch (err) {
+      console.error(err);
+      setErrorEnvio("No se pudo calcular el envío.");
+    } finally {
+      setCalculandoEnvio(false);
+    }
+  };
+
+  // --------------------------------------------------------
+  // 3️⃣ Procesar pago
   // --------------------------------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (pagando) return;
+    if (pagando || !envio) return;
 
     setPagando(true);
     setMensajeExito("");
@@ -83,7 +124,6 @@ export default function PagoPage() {
     const idUsuario = Number(localStorage.getItem("idUsuario") || 1);
 
     try {
-      // Crear pedido
       const resPedido = await fetch(
         `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/crear/${idCarrito}/${idUsuario}`,
         { method: "POST" }
@@ -93,7 +133,6 @@ export default function PagoPage() {
 
       const pedido = await resPedido.json();
 
-      // Registrar pago
       const resPago = await fetch(
         `https://apipago-production-73a5.up.railway.app/Api/v1/pago/pedido/pagar/${pedido.id}?metodoPago=${metodoPago}`,
         { method: "POST" }
@@ -101,7 +140,6 @@ export default function PagoPage() {
 
       if (!resPago.ok) throw new Error("Error procesando pago");
 
-      // Éxito
       setMensajeExito(`Gracias por tu compra, ${nombre}. ¡Pago exitoso!`);
 
       localStorage.removeItem("idCarrito");
@@ -114,13 +152,14 @@ export default function PagoPage() {
     }
   };
 
-  const total = calcularTotal();
-
+  // ========================================================
+  // RENDER
+  // ========================================================
   return (
     <>
       {/* Banner */}
       <div
-        className="banner-superior d-flex align-items-center justify-content-center text-white text-shadow"
+        className="banner-superior d-flex align-items-center justify-content-center text-white"
         style={{
           backgroundImage: 'url("/imagenes/primera_imag.jpg")',
           backgroundSize: "cover",
@@ -133,9 +172,7 @@ export default function PagoPage() {
 
       <div className="container my-5">
         <div className="row">
-          {/* ------------------------------------------------------
-              FORMULARIO DE PAGO
-          ------------------------------------------------------ */}
+          {/* FORMULARIO */}
           <div className="col-md-6 mb-4">
             <h2 className="text-center mb-4">Formulario de Pago</h2>
 
@@ -146,7 +183,6 @@ export default function PagoPage() {
               <div className="mb-3">
                 <label className="form-label">Nombre completo</label>
                 <input
-                  type="text"
                   className="form-control"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
@@ -155,9 +191,8 @@ export default function PagoPage() {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Dirección de envío</label>
+                <label className="form-label">Dirección</label>
                 <input
-                  type="text"
                   className="form-control"
                   value={direccion}
                   onChange={(e) => setDireccion(e.target.value)}
@@ -166,7 +201,27 @@ export default function PagoPage() {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Correo electrónico</label>
+                <label className="form-label">Comuna</label>
+                <input
+                  className="form-control"
+                  value={comuna}
+                  onChange={(e) => setComuna(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Región</label>
+                <input
+                  className="form-control"
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Correo</label>
                 <input
                   type="email"
                   className="form-control"
@@ -185,16 +240,29 @@ export default function PagoPage() {
                   required
                 >
                   <option value="">Selecciona un método</option>
-                  <option value="tarjeta">Tarjeta de crédito</option>
+                  <option value="tarjeta">Tarjeta</option>
                   <option value="transferencia">Transferencia</option>
                   <option value="paypal">PayPal</option>
                 </select>
               </div>
 
               <button
+                type="button"
+                className="btn btn-outline-secondary w-100 mb-3"
+                onClick={handleCalcularEnvio}
+                disabled={calculandoEnvio}
+              >
+                {calculandoEnvio ? "Calculando envío..." : "Calcular envío"}
+              </button>
+
+              {errorEnvio && (
+                <div className="alert alert-danger">{errorEnvio}</div>
+              )}
+
+              <button
                 type="submit"
                 className="btn btn-success w-100"
-                disabled={pagando || cargandoCarrito || !!errorCarrito}
+                disabled={pagando || cargandoCarrito || !envio}
               >
                 {pagando ? "Procesando pago..." : "Pagar"}
               </button>
@@ -205,57 +273,50 @@ export default function PagoPage() {
             </form>
           </div>
 
-          {/* ------------------------------------------------------
-              RESUMEN DE LA COMPRA
-          ------------------------------------------------------ */}
+          {/* RESUMEN */}
           <div className="col-md-6">
             <h2 className="text-center mb-4">Resumen de tu compra</h2>
 
-            {cargandoCarrito && (
-              <p className="text-center">Cargando carrito...</p>
-            )}
-
-            {errorCarrito && (
-              <div className="alert alert-danger text-center">
-                {errorCarrito}
-              </div>
-            )}
-
-            {!cargandoCarrito && carrito && carrito.detalles && (
+            {carrito && carrito.detalles && (
               <div className="card shadow">
                 <div className="card-body">
-                  {carrito.detalles.length > 0 ? (
+                  {carrito.detalles.map((item) => (
+                    <div
+                      key={item.idProducto}
+                      className="d-flex justify-content-between mb-2"
+                    >
+                      <span>
+                        {item.cantidad} x {item.producto?.nombreProducto}
+                      </span>
+                      <span>
+                        ${item.cantidad * (item.producto?.precio || 0)}
+                      </span>
+                    </div>
+                  ))}
+
+                  {envio && (
                     <>
-                      {carrito.detalles.map((item) => (
-                        <div
-                          key={item.idProducto}
-                          className="d-flex justify-content-between mb-2"
-                        >
-                          <div>
-                            <strong>{item.producto?.nombreProducto}</strong>
-                            <div className="text-muted">
-                              {item.cantidad} x ${item.producto?.precio}
-                            </div>
-                          </div>
-                          <span className="fw-bold">
-                            ${item.cantidad * (item.producto?.precio || 0)}
-                          </span>
-                        </div>
-                      ))}
-
                       <hr />
-
-                      <div className="d-flex justify-content-between fw-bold">
-                        <span>Total:</span>
-                        <span>${total}</span>
+                      <div className="d-flex justify-content-between">
+                        <span>Distancia</span>
+                        <span>{envio.distanciaKm} km</span>
+                      </div>
+                      <div className="d-flex justify-content-between">
+                        <span>Envío</span>
+                        <span>${envio.costoEnvio}</span>
+                      </div>
+                      <div className="d-flex justify-content-between text-muted">
+                        <span>Tiempo</span>
+                        <span>{envio.tiempoEstimadoHoras} hrs</span>
                       </div>
                     </>
-                  ) : (
-                    <p className="text-center">
-                      Tu carrito está vacío.{" "}
-                      <Link href="/productos">Ver productos</Link>
-                    </p>
                   )}
+
+                  <hr />
+                  <div className="d-flex justify-content-between fw-bold">
+                    <span>Total</span>
+                    <span>${totalFinal}</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -264,7 +325,7 @@ export default function PagoPage() {
               href="/carrito"
               className="btn btn-outline-primary w-100 mt-3"
             >
-              Ver Carrito
+              Volver al carrito
             </Link>
           </div>
         </div>
