@@ -3,6 +3,8 @@
 export default function PagoForm({
   nombre,
   setNombre,
+  // apellidos,
+  // setApellidos,
   correo,
   setCorreo,
   direccion,
@@ -20,6 +22,7 @@ export default function PagoForm({
   pagando,
   envio,
   mensajeExito,
+  preference_id,
 }) {
   return (
     <>
@@ -35,6 +38,17 @@ export default function PagoForm({
             required
           />
         </div>
+
+        {/* <div className="mb-3">
+          <label className="form-label">Apellidos</label>
+          <input
+            className="form-control"
+            value={apellidos}
+            onChange={(e) => setApellidos(e.target.value)}
+            required
+          />
+        </div> */}
+  
 
         <div className="mb-3">
           <label className="form-label">Dirección</label>
@@ -88,7 +102,7 @@ export default function PagoForm({
             <option value="">Selecciona un método</option>
             <option value="tarjeta">Tarjeta</option>
             <option value="transferencia">Transferencia</option>
-            <option value="paypal">PayPal</option>
+            <option value="mercadopago">Mercado Pago</option>
           </select>
         </div>
 
@@ -103,13 +117,36 @@ export default function PagoForm({
 
         {errorEnvio && <div className="alert alert-danger">{errorEnvio}</div>}
 
-        <button
-          type="submit"
-          className="btn btn-success w-100"
-          disabled={pagando || !envio}
-        >
-          {pagando ? "Procesando pago..." : "Pagar"}
-        </button>
+        {/* Si el método de pago es Mercado Pago mostramos botón Wallet */}
+        {metodoPago === "mercadopago" ? (
+          <>
+            {preference_id ? (
+              <div style={{ width: "100%" }}>
+                <Wallet 
+                  initialization={{ preference_id }}
+                  customization={{ texts:{ valueProp: 'smart_option'}}} />
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-secondary w-100"
+                disabled
+              >
+                Cargando botón de pago...
+              </button>
+            )}
+          </>
+        ) : (
+          // Para otros métodos mostramos botón normal que dispara handleSubmit en PagoPage
+          <button
+            type="submit"
+            className="btn btn-success w-100"
+            disabled={pagando || !envio}
+          >
+            {pagando ? "Procesando pago..." : "Pagar"}
+          </button>
+        )}
+
 
         {mensajeExito && (
           <div className="alert alert-success mt-3">{mensajeExito}</div>

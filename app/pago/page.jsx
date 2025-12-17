@@ -6,6 +6,8 @@ import { getCarrito } from "@/services/apiCarrito";
 import { calcularEnvio } from "@/services/apiEnvio";
 import { crearPedido, pagarPedido } from "@/services/apiPago";
 
+import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
+
 import PagoForm from "../../components/PagoForm";
 import ResumenCompra from "../../components/ResumenCompra";
 
@@ -16,6 +18,7 @@ export default function PagoPage() {
   // Datos usuario / formulario
   // -------------------------------
   const [nombre, setNombre] = useState("");
+  //const [apellidos, setApellidos] = useState("");
   const [correo, setCorreo] = useState("");
   const [direccion, setDireccion] = useState("");
   const [comuna, setComuna] = useState("");
@@ -36,6 +39,20 @@ export default function PagoPage() {
   const [cargandoCarrito, setCargandoCarrito] = useState(true);
   const [pagando, setPagando] = useState(false);
   const [mensajeExito, setMensajeExito] = useState("");
+
+  // -------------------------------
+  // Estados Mercado Pago
+  // -------------------------------
+  const [preference_id, setPreferenceId] = useState(null);
+
+  // Inicializar Mercado Pago
+  useEffect(() => {
+    initMercadoPago("APP_USR-0e458623-640e-41d4-a990-980f33c660de", {
+      locale: "es-CL",
+    });
+  }, []);
+
+
 
   // --------------------------------------------------------
   // 1️⃣ Verificar sesión + autocompletar + cargar carrito
@@ -72,6 +89,42 @@ export default function PagoPage() {
 
     cargarCarrito();
   }, [router]);
+
+
+  // --------------------------------------------------------
+  // Crear preferencia Mercado Pago cuando carrito cambie
+  // --------------------------------------------------------
+
+  useEffect(() => {
+    const createPreference = async () => {
+      if (!carrito?.detalles?.length) return;
+
+      try {
+        const response = await fetch("http://localhost:3030/create_preference", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: carrito.detalles.map((item) => ({
+              title: item.producto.nombre,
+              quantity: item.cantidad,
+              unit_price: item.producto.precio,
+            })),
+          }),
+        });
+
+        if (!response.ok) throw new Error("Error al crear la preferencia");
+
+        const data = await response.json();
+        setPreferenceId(data.preference_id);
+      } catch (error) {
+        console.error("Error creando preferencia:", error);
+      }
+    };
+
+    createPreference();
+  }, [carrito]);
+
+
 
   // --------------------------------------------------------
   // Calcular total productos
@@ -177,6 +230,7 @@ export default function PagoPage() {
               pagando={pagando}
               envio={envio}
               mensajeExito={mensajeExito}
+              preference_id={preference_id}
             />
           </div>
 
